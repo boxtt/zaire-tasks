@@ -18,7 +18,7 @@ $surl  = get_arr($data, 'surl');      // 要破解的百度网盘资料的surl
 $start = intval(get_arr($data, 'start'));    // 从哪个数字开始验证密码
 $end   = intval(get_arr($data, 'end'));        // 验证到哪个密码
 $limit = intval(get_arr($data, 'limit'));      // 要破解的百度网盘资料的surl
-$sure  = $data['sure']; // 是否确认
+$sure  = get_arr($data, 'sure'); // 是否确认
 //dump($data);die;
 
 if ( ! $surl)
