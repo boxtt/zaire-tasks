@@ -6,7 +6,7 @@ class sql {
 	private $port = '3306';
 	private $user = 'root';
 	private $pwd = 'root';
-	private $db = 'proxy';
+	private $db = 'zaire';
 	private $char = 'UTF8';
 	private $prefix = '';
 	private $fetch_mode = MYSQLI_ASSOC;//获取模式

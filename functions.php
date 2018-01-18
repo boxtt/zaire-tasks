@@ -2,19 +2,47 @@
 
 function get_ip()
 {
-
 	// http代理和https代理是不一样的
 //	curl_setopt($ch, CURLOPT_PROXY, $ip);
 //	curl_setopt($ch, CURLOPT_PROXYPORT, $port);
 ////curl_setopt($ch, CURLOPT_PROXYUSERPWD, ":"); //http代理认证帐号，username:password的格式
 //	curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); //使用http代理模式
-
 	$ip_port = [
-		['120.55.61.182', '80'],
+		['118.114.77.47', '8080'],
+		['116.27.245.37', '808'],
+		['117.65.41.76', '42421'],
+		['39.134.161.14', '8080'],
+		['125.210.121.113', '3128'],
+		['27.36.116.226', '3128'],
+		['218.56.132.158', '8080'],
+		['47.52.252.4', '3128'],
+		['61.155.164.110', '3128'],
+		['207.154.231.209', '1080'],
+		['124.193.33.233', '3128'],
+		['111.2.122.46', '8080'],
+		['218.56.132.156', '8080'],
+		['111.2.122.46', '8080'],
+		['218.56.132.156', '8080'],
+		['60.214.155.243', '53281'],
+		['125.211.202.26', '53281'],
+		['27.42.185.16', '9797'],
 		['219.138.58.42', '3128'],
+		['120.77.201.46', '8080'],
+		['58.83.218.186', '80'],
+		['113.106.94.213', '80'],
+		['101.6.51.61', '8123'],
+		['183.51.191.146', '9999'],
+		['183.163.46.24', '42421'],
+		['58.83.218.186', '80'],
+		['120.55.61.182', '80'],
+		['60.208.44.228', '80'],
+		['106.39.179.86', '80'],
+		['125.89.53.73', '9797'],
 	];
 
 	return $ip_port[0];
+
+	return $ip_port[array_rand($ip_port)];
 }
 
 function get_str($i)
@@ -280,6 +308,45 @@ function get_code($cookie, $ip, $port)
 	}
 
 	return FALSE;
+}
+
+function xici_curl($url)
+{
+	$time = time();
+	list($ip, $port) = get_ip();
+	$proxy      = $ip.':'.$port;
+	$user_agent = get_user_agent();
+	$ch         = curl_init($url);
+	curl_setopt($ch, CURLOPT_PROXY, $proxy);
+//	curl_setopt($ch, CURLOPT_PROXY, $ip);
+//	curl_setopt($ch, CURLOPT_PROXYPORT, $port);
+	curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, [
+		'Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+//		'Accept-Encoding:gzip, deflate',
+		'Accept-Language:zh-CN,zh;q=0.9',
+		'Cache-Control:no-cache',
+		'Host:www.xicidaili.com',
+		'Pragma:no-cache',
+		'Proxy-Connection:keep-alive',
+		//		'Connection:keep-alive',
+		'Referer:'.$url,
+		'Upgrade-Insecure-Requests:1',
+		'User-Agent:'.$user_agent,
+		'Content-Type:application/x-www-form-urlencoded; charset=UTF-8',
+		/*'Cookie:Hm_lvt_0cf76c77469e965d2957f0553e6ecf59='.($time - 86400 * 4).','.($time - 86400 * 3).','.($time - 86400
+			* 2).','.($time - 86400).'; Hm_lvt_c27e828ededac3928c725c1cd6475dbd='.($time - 86400 * 4).','.($time - 86400
+			* 3).','.($time - 86400 * 2).','.($time - 86400)
+		.'; _free_proxy_session=BAh7B0kiD3Nlc3Npb25faWQGOgZFVEkiJWYwYTM0ZjhjZjNmOTJiMWQ0N2Y5YWViM2M4YTllODA1BjsAVEkiEF9jc3JmX3Rva2VuBjsARkkiMUJhWERQNUlOMmNheVkvSE1pd3Z5ME5MbFVnVnp5cFpmRy84Mk1EZFlJMFk9BjsARg%3D%3D--38b9b1f123d1acc14d3f544066a8b9c0b3d2e8b1; Hm_lpvt_0cf76c77469e965d2957f0553e6ecf59='
+		.$time.'; Hm_lpvt_c27e828ededac3928c725c1cd6475dbd='.$time,*/
+	]);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+	$result = curl_exec($ch);
+	curl_close($ch);
+
+	return $result;
 }
 
 /*
