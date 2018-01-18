@@ -1,8 +1,7 @@
 <?php
 header('Content-Type:text/html; charset=utf-8');
 //include_once("../mysqli.php");
-require("curl_http.php");
-require './functions.php';
+//require("curl_http.php");
 function ob2ar($obj)
 {
 	if (is_object($obj))
@@ -36,7 +35,7 @@ $html_data = $curl->fetch_url("http://www.luckyairship.com/history.html");*/
 //$user_agent = get_user_agent();
 $url        = 'http://www.luckyairship.com/history.html';
 $user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Maxthon/4.4.3.4000 Chrome/30.0.1599.101';
-$cookie     = get_cookie_new($url, $user_agent);
+$cookie     = get_cookie($url, $user_agent);
 $html_data  = get_html($url, $user_agent, $cookie);
 
 /**
@@ -53,7 +52,7 @@ $html_data  = get_html($url, $user_agent, $cookie);
  * User - Agent:Mozilla / 5.0 (Windows NT 6.1; Win64; x64) AppleWebKit / 537.36 (KHTML, like Gecko) Chrome / 63.0.3239.132 Safari
  * / 537.36
  **/
-function get_cookie_new($url, $user_agent)
+function get_cookie($url, $user_agent)
 {
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [
