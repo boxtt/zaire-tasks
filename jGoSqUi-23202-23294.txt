@@ -1,0 +1,113 @@
+"23202---0hwi"{"user-agent":"Opera\/10.61 (J2ME\/MIDP; Opera Mini\/5.1.21219\/19.999; en-US; rv:1.9.3a5) WebKit\/534.5 Presto\/2.6.30","error_num":1,"errno":9999,"repeat_num":1}
+"23202---0hwi"{"errno":-9,"err_msg":"","request_id":2.0128106730238e+17}
+"23203---0hwj"{"user-agent":"Gaisbot\/3.0 (robot@gais.cs.ccu.edu.tw; http:\/\/gais.cs.ccu.edu.tw\/robot.php)","error_num":2,"errno":9999,"repeat_num":2}
+"23203---0hwj"{"errno":-9,"err_msg":"","request_id":2.0128329694004e+17}
+"23204---0hwk"{"user-agent":"Mozilla\/4.8 [en] (Windows NT 5.1; U)","error_num":3,"errno":9999,"repeat_num":3}
+"23204---0hwk"{"errno":-9,"err_msg":"","request_id":2.0128553165438e+17}
+"23205---0hwl"{"errno":-9,"err_msg":"","request_id":2.0128564381511e+17}
+"23206---0hwm"{"errno":-9,"err_msg":"","request_id":2.012857571595e+17}
+"23207---0hwn"{"user-agent":"Mozilla\/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident\/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; Zune 3.0)","error_num":4,"errno":9999,"repeat_num":4}
+"23207---0hwn"{"errno":-9,"err_msg":"","request_id":2.0128850854949e+17}
+"23208---0hwo"{"errno":-9,"err_msg":"","request_id":2.0128856303963e+17}
+"23209---0hwp"{"errno":-9,"err_msg":"","request_id":2.0128965989486e+17}
+"23210---0hwq"{"errno":-9,"err_msg":"","request_id":2.0129004085621e+17}
+"23211---0hwr"{"errno":-9,"err_msg":"","request_id":2.0129110274514e+17}
+"23212---0hws"{"errno":-9,"err_msg":"","request_id":2.0129115752824e+17}
+"23213---0hwt"{"errno":-9,"err_msg":"","request_id":2.012925724592e+17}
+"23214---0hwu"{"errno":-9,"err_msg":"","request_id":2.0129318828237e+17}
+"23215---0hwv"{"errno":-9,"err_msg":"","request_id":2.0129386332879e+17}
+"23216---0hww"{"user-agent":"msnbot\/1.0 ( http:\/\/search.msn.com\/msnbot.htm)","error_num":5,"errno":9999,"repeat_num":5}
+"23216---0hww"{"errno":-9,"err_msg":"","request_id":2.0129663686629e+17}
+"23217---0hwx"{"errno":-9,"err_msg":"","request_id":2.0129668806209e+17}
+"23218---0hwy"{"errno":-9,"err_msg":"","request_id":2.0129710576645e+17}
+"23219---0hwz"{"errno":-9,"err_msg":"","request_id":2.0129928030829e+17}
+"23220---0hx0"{"errno":-9,"err_msg":"","request_id":2.0129964327219e+17}
+"23221---0hx1"{"errno":-9,"err_msg":"","request_id":2.012997598125e+17}
+"23222---0hx2"{"errno":-9,"err_msg":"","request_id":2.0130015274732e+17}
+"23223---0hx3"{"errno":-9,"err_msg":"","request_id":2.0130032408212e+17}
+"23224---0hx4"{"errno":-9,"err_msg":"","request_id":2.0130137198559e+17}
+"23225---0hx5"{"errno":-9,"err_msg":"","request_id":2.0130231080302e+17}
+"23226---0hx6"{"errno":-9,"err_msg":"","request_id":2.0130261570109e+17}
+"23227---0hx7"{"errno":-9,"err_msg":"","request_id":2.0130285830837e+17}
+"23228---0hx8"{"user-agent":"Mozilla\/5.0 (compatible; MSIE 8.0; Windows NT 5.1; SLCC1; .NET CLR 1.1.4322)","error_num":6,"errno":9999,"repeat_num":6}
+"23228---0hx8"{"errno":-9,"err_msg":"","request_id":2.0130475424426e+17}
+"23229---0hx9"{"errno":-9,"err_msg":"","request_id":2.0130480537458e+17}
+"23230---0hxa"{"errno":-9,"err_msg":"","request_id":2.0130491936059e+17}
+"23231---0hxb"{"errno":-9,"err_msg":"","request_id":2.0130549919664e+17}
+"23232---0hxc"{"user-agent":"Mozilla\/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident\/5.0; FunWebProducts)","error_num":7,"errno":9999,"repeat_num":7}
+"23232---0hxc"{"errno":-9,"err_msg":"","request_id":2.0130708276389e+17}
+"23233---0hxd"{"errno":-9,"err_msg":"","request_id":2.0130762035275e+17}
+"23234---0hxe"{"errno":-9,"err_msg":"","request_id":2.0130882486696e+17}
+"23235---0hxf"{"errno":-9,"err_msg":"","request_id":2.0130900680363e+17}
+"23236---0hxg"{"errno":-9,"err_msg":"","request_id":2.0130935206678e+17}
+"23237---0hxh"{"errno":-62,"request_id":2.0130946132138e+17,"repeat_num":8,"error_num":7}
+"23237---0hxh"{"errno":-9,"err_msg":"","request_id":2.013099195791e+17}
+"23238---0hxi"{"errno":-9,"err_msg":"","request_id":2.0131030121992e+17}
+"23239---0hxj"{"errno":-9,"err_msg":"","request_id":2.0131047514148e+17}
+"23240---0hxk"{"errno":-9,"err_msg":"","request_id":2.0131065696545e+17}
+"23241---0hxl"{"errno":-9,"err_msg":"","request_id":2.0131076990365e+17}
+"23242---0hxm"{"errno":-9,"err_msg":"","request_id":2.0131082897592e+17}
+"23243---0hxn"{"errno":-9,"err_msg":"","request_id":2.0131166652662e+17}
+"23244---0hxo"{"errno":-9,"err_msg":"","request_id":2.0131177842654e+17}
+"23245---0hxp"{"errno":-9,"err_msg":"","request_id":2.0131195693172e+17}
+"23246---0hxq"{"errno":-9,"err_msg":"","request_id":2.0131228370325e+17}
+"23247---0hxr"{"errno":-9,"err_msg":"","request_id":2.0131243019467e+17}
+"23248---0hxs"{"errno":-9,"err_msg":"","request_id":2.0131266691893e+17}
+"23249---0hxt"{"user-agent":"SonyEricssonZ800\/R1Y Browser\/SEMC-Browser\/4.1 Profile\/MIDP-2.0 Configuration\/CLDC-1.1 UP.Link\/6.3.0.0.0","error_num":8,"errno":9999,"repeat_num":9}
+"23249---0hxt"{"errno":-9,"err_msg":"","request_id":2.0131457476527e+17}
+"23250---0hxu"{"errno":-9,"err_msg":"","request_id":2.0131582913913e+17}
+"23251---0hxv"{"user-agent":"Mozilla\/5.0 (Windows NT 6.1; WOW64) AppleWebKit\/537.1 (KHTML, like Gecko) Chrome\/22.0.1207.1 Safari\/537.1","error_num":9,"errno":9999,"repeat_num":10}
+"23251---0hxv"{"user-agent":"Mozilla\/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit\/533.20.25 (KHTML, like Gecko) Version\/5.0.3 Safari\/533.19.4","error_num":10,"errno":9999,"repeat_num":11}
+"23251---0hxv"{"errno":-9,"err_msg":"","request_id":2.0131998725972e+17}
+"23252---0hxw"{"user-agent":"Mozilla\/5.0 (Linux; U; Android 4.0.3; en-us; KFTT Build\/IML74K) AppleWebKit\/535.19 (KHTML, like Gecko) Silk\/2.1 Mobile Safari\/535.19 Silk-Accelerated=true","error_num":11,"errno":9999,"repeat_num":12}
+"23252---0hxw"{"user-agent":"Mozilla\/5.0 (Windows NT 6.1; rv:6.0) Gecko\/20100101 Firefox\/19.0","error_num":12,"errno":9999,"repeat_num":13}
+"23252---0hxw"{"errno":-9,"err_msg":"","request_id":2.0132335472539e+17}
+"23253---0hxx"{"errno":-9,"err_msg":"","request_id":2.0132417429341e+17}
+"23254---0hxy"{"errno":-9,"err_msg":"","request_id":2.0132490170515e+17}
+"23255---0hxz"{"errno":-9,"err_msg":"","request_id":2.0132521636272e+17}
+"23256---0hy0"{"user-agent":"Opera\/9.80 (Windows NT 6.1; U; ko) Presto\/2.7.62 Version\/11.00","error_num":13,"errno":9999,"repeat_num":14}
+"23256---0hy0"{"user-agent":"Mozilla\/5.0 (Linux; U; Android 1.6; en-us; SonyEricssonX10i Build\/R1AA056) AppleWebKit\/528.5  (KHTML, like Gecko) Version\/3.1.2 Mobile Safari\/525.20.1","error_num":14,"errno":9999,"repeat_num":15}
+"23256---0hy0"{"errno":-9,"err_msg":"","request_id":2.0132915858501e+17}
+"23257---0hy1"{"errno":-9,"err_msg":"","request_id":2.0132927179197e+17}
+"23258---0hy2"{"errno":-9,"err_msg":"","request_id":2.0132938332534e+17}
+"23259---0hy3"{"errno":-9,"err_msg":"","request_id":2.0133015691393e+17}
+"23260---0hy4"{"errno":-9,"err_msg":"","request_id":2.0133039737815e+17}
+"23261---0hy5"{"errno":-9,"err_msg":"","request_id":2.0133071497373e+17}
+"23262---0hy6"{"errno":-9,"err_msg":"","request_id":2.0133125071744e+17}
+"23263---0hy7"{"errno":-9,"err_msg":"","request_id":2.0133147674358e+17}
+"23264---0hy8"{"errno":-9,"err_msg":"","request_id":2.0133166204032e+17}
+"23265---0hy9"{"user-agent":"Mozilla\/4.0 (compatible; Linux 2.6.22) NetFront\/3.4 Kindle\/2.0 (screen 600x800)","error_num":15,"errno":9999,"repeat_num":16}
+"23265---0hy9"{"errno":-9,"err_msg":"","request_id":2.0133331041138e+17}
+"23266---0hya"{"errno":-9,"err_msg":"","request_id":2.0133336904484e+17}
+"23267---0hyb"{"errno":-9,"err_msg":"","request_id":2.0133358912781e+17}
+"23268---0hyc"{"errno":-9,"err_msg":"","request_id":2.0133531159437e+17}
+"23269---0hyd"{"user-agent":"Mozilla\/5.0 (X11; U; Linux i686; en-US) AppleWebKit\/534.15 (KHTML, like Gecko) Ubuntu\/10.10 Chromium\/10.0.613.0 Chrome\/10.0.613.0 Safari\/534.15","error_num":16,"errno":9999,"repeat_num":17}
+"23269---0hyd"{"errno":-9,"err_msg":"","request_id":2.01337129722e+17}
+"23270---0hye"{"user-agent":"Mozilla\/5.0 (Linux; Android 4.3; SPH-L710 Build\/JSS15J) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/32.0.1700.99 Mobile Safari\/537.36","error_num":17,"errno":9999,"repeat_num":18}
+"23270---0hye"{"errno":-9,"err_msg":"","request_id":2.0134038481927e+17}
+"23271---0hyf"{"user-agent":"Opera\/9.80 (Windows NT 6.0; U; pl) Presto\/2.10.229 Version\/11.62","error_num":18,"errno":9999,"repeat_num":19}
+"23271---0hyf"{"errno":-9,"err_msg":"","request_id":2.0134241312357e+17}
+"23272---0hyg"{"errno":-9,"err_msg":"","request_id":2.0134258760937e+17}
+"23273---0hyh"{"errno":-9,"err_msg":"","request_id":2.0134363660454e+17}
+"23274---0hyi"{"errno":-9,"err_msg":"","request_id":2.0134382450324e+17}
+"23275---0hyj"{"errno":-9,"err_msg":"","request_id":2.0134405464654e+17}
+"23276---0hyk"{"errno":-9,"err_msg":"","request_id":2.0134467256407e+17}
+"23277---0hyl"{"errno":-9,"err_msg":"","request_id":2.0134511141863e+17}
+"23278---0hym"{"errno":-9,"err_msg":"","request_id":2.0134536748767e+17}
+"23279---0hyn"{"errno":-9,"err_msg":"","request_id":2.0134547861717e+17}
+"23280---0hyo"{"errno":-9,"err_msg":"","request_id":2.0134603053297e+17}
+"23281---0hyp"{"errno":-9,"err_msg":"","request_id":2.0134608774747e+17}
+"23282---0hyq"{"errno":-9,"err_msg":"","request_id":2.0134714219381e+17}
+"23283---0hyr"{"errno":-9,"err_msg":"","request_id":2.0134771251364e+17}
+"23284---0hys"{"user-agent":"Mozilla\/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident\/4.0)","error_num":19,"errno":9999,"repeat_num":20}
+"23284---0hys"{"errno":-9,"err_msg":"","request_id":2.013496182286e+17}
+"23285---0hyt"{"errno":-9,"err_msg":"","request_id":2.0134973471311e+17}
+"23286---0hyu"{"errno":-9,"err_msg":"","request_id":2.0134991582226e+17}
+"23287---0hyv"{"errno":-9,"err_msg":"","request_id":2.0135035257114e+17}
+"23288---0hyw"{"errno":-9,"err_msg":"","request_id":2.0135059663281e+17}
+"23289---0hyx"{"errno":-9,"err_msg":"","request_id":2.0135077922336e+17}
+"23290---0hyy"{"errno":-9,"err_msg":"","request_id":2.0135146722567e+17}
+"23291---0hyz"{"errno":-9,"err_msg":"","request_id":2.0135232457353e+17}
+"23292---0hz0"{"errno":-9,"err_msg":"","request_id":2.0135263459394e+17}
+"23293---0hz1"{"errno":-9,"err_msg":"","request_id":2.0135306841977e+17}
+"23294---0hz2"{"user-agent":"Mozilla\/5.0 (X11; Linux) KHTML\/4.9.1 (like Gecko) Konqueror\/4.9","error_num":20,"errno":9999,"repeat_num":21}
