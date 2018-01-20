@@ -1,0 +1,121 @@
+{
+  "configs": [
+    {
+      "server": "13.124.92.24",
+      "server_port": 11383,
+      "password": "zairezhang",
+      "method": "aes-256-cfb",
+      "plugin": "",
+      "plugin_opts": "",
+      "remarks": "aws-self",
+      "timeout": 5
+    },
+    {
+      "server": "1.248.255.115",
+      "server_port": 8989,
+      "password": "qq000123",
+      "method": "aes-256-cfb",
+      "plugin": "",
+      "plugin_opts": "",
+      "remarks": "",
+      "timeout": 5
+    },
+    {
+      "server": "172.96.14.158",
+      "server_port": 6688,
+      "password": "ntdtv.com",
+      "method": "aes-256-cfb",
+      "plugin": "",
+      "plugin_opts": "",
+      "remarks": "1芝加哥",
+      "timeout": 5
+    },
+    {
+      "server": "86.104.220.224",
+      "server_port": 4437,
+      "password": "dongtaiwang.com",
+      "method": "aes-256-cfb",
+      "plugin": "",
+      "plugin_opts": "",
+      "remarks": "2罗马尼亚",
+      "timeout": 5
+    },
+    {
+      "server": "86.104.220.206",
+      "server_port": 6658,
+      "password": "ntdtv.com",
+      "method": "aes-256-cfb",
+      "plugin": "",
+      "plugin_opts": "",
+      "remarks": "3罗马尼亚",
+      "timeout": 5
+    },
+    {
+      "server": "86.104.220.212",
+      "server_port": 1129,
+      "password": "ntdtv.com",
+      "method": "aes-256-cfb",
+      "plugin": "",
+      "plugin_opts": "",
+      "remarks": "4罗马尼亚",
+      "timeout": 5
+    },
+    {
+      "server": "159.89.135.7",
+      "server_port": 999,
+      "password": "ntdtv.com",
+      "method": "aes-256-cfb",
+      "plugin": "",
+      "plugin_opts": "",
+      "remarks": "5旧金山",
+      "timeout": 5
+    },
+    {
+      "server": "104.160.181.22",
+      "server_port": 888,
+      "password": "dongtaiwang.com",
+      "method": "aes-256-cfb",
+      "plugin": "",
+      "plugin_opts": "",
+      "remarks": "6洛杉矶",
+      "timeout": 5
+    }
+  ],
+  "strategy": null,
+  "index": 7,
+  "global": false,
+  "enabled": true,
+  "shareOverLan": false,
+  "isDefault": false,
+  "localPort": 1080,
+  "pacUrl": null,
+  "useOnlinePac": false,
+  "secureLocalPac": true,
+  "availabilityStatistics": false,
+  "autoCheckUpdate": true,
+  "checkPreRelease": false,
+  "isVerboseLogging": false,
+  "logViewer": {
+    "topMost": false,
+    "wrapText": false,
+    "toolbarShown": false,
+    "Font": "Consolas, 8pt",
+    "BackgroundColor": "Black",
+    "TextColor": "White"
+  },
+  "proxy": {
+    "useProxy": false,
+    "proxyType": 0,
+    "proxyServer": "",
+    "proxyPort": 0,
+    "proxyTimeout": 3
+  },
+  "hotkey": {
+    "SwitchSystemProxy": "",
+    "SwitchSystemProxyMode": "",
+    "SwitchAllowLan": "",
+    "ShowLogs": "",
+    "ServerMoveUp": "",
+    "ServerMoveDown": ""
+  }
+}

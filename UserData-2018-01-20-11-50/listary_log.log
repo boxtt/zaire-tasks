@@ -1,0 +1,32 @@
+[1219/085111:49811:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[1221/084531:35505:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[1221/084531:35755:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[1221/084531:35755:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
+[0106/084907:43430:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[0106/084909:45006:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[0106/084909:45006:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
+[0106/142616:20272470:ERROR:window_impl.cc(56)] Failed to unregister class Listary_WidgetWin_0. Error = 0
+[0108/084015:50825:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[0108/084015:51417:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[0108/084015:51417:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
+[0109/084717:67096:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[0109/084717:67174:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[0109/084717:67174:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
+[0110/085717:73008:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[0110/085717:73086:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[0110/085717:73086:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
+[0111/085243:45333:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[0111/085243:45380:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[0111/085243:45380:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
+[0112/085115:36987:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[0112/085115:37393:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[0112/085115:37393:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
+[0112/125529:34117:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[0112/125529:34195:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[0112/125529:34195:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
+[0116/084946:57782:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[0116/084954:65738:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[0116/084954:65738:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
+[0117/085423:36441:WARNING:status_icon_win.cpp(41)] Unable to create status tray icon.
+[0117/085423:36675:WARNING:status_icon_win.cpp(53)] Error setting status tray icon image
+[0117/085423:36675:WARNING:status_icon_win.cpp(92)] Unable to set tooltip for status tray icon
