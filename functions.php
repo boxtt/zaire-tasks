@@ -721,3 +721,322 @@ function fill_empty_line($result, $full, $fill)
 	}
 }
 
+/**
+ * 检测是否是邮箱
+ *
+ * @param $email
+ *
+ * @return int
+ */
+function check_email($email)
+{
+	$pattern = '/^(\w)+(\.\w+)*@(\w)+((\.\w{2,3}){1,3})$/';
+
+	return preg_match($pattern, $email);
+}
+
+/**
+ * 检测是否是手机号码
+ *
+ * @param $phone
+ *
+ * @return int
+ */
+function check_phone($phone)
+{
+	$pattern = '/^(\+86)?1[0-9]{10}$/';
+
+	return preg_match($pattern, $phone);
+}
+
+// 谷歌翻译 --start
+// ar 是阿拉伯 en是英语 zh-CN是汉语
+// zh-CN:中文;auto:检测语言;sq:阿尔巴尼亚语;ar:阿拉伯语;am:阿姆哈拉语;az:阿塞拜疆语;ga:爱尔兰语;et:爱沙尼亚语;
+// eu:巴斯克语;be:白俄罗斯语;bg:保加利亚语;is:冰岛语;pl:波兰语;bs:波斯尼亚语;fa:波斯语;af:布尔语(南非荷兰语);da:丹麦语;
+// de:德语;ru:俄语;fr:法语;tl:菲律宾语;fi:芬兰语;fy:弗里西语;km:高棉语;ka:格鲁吉亚语;gu:古吉拉特语;kk:哈萨克语;ht:海地克里奥尔语;
+// ko:韩语;ha:豪萨语;nl:荷兰语;ky:吉尔吉斯语;gl:加利西亚语;ca:加泰罗尼亚语;cs:捷克语;kn:卡纳达语;co:科西嘉语;hr:克罗地亚语;
+// ku:库尔德语;la:拉丁语;lv:拉脱维亚语;lo:老挝语;lt:立陶宛语;lb:卢森堡语;ro:罗马尼亚语;mg:马尔加什语;mt:马耳他语;mr:马拉地语;
+// ml:马拉雅拉姆语;ms:马来语;mk:马其顿语;mi:毛利语;mn:蒙古语;bn:孟加拉语;my:缅甸语;hmn:苗语;xh:南非科萨语;zu:南非祖鲁语;
+// ne:尼泊尔语;no:挪威语;pa:旁遮普语;pt:葡萄牙语;ps:普什图语;ny:齐切瓦语;ja:日语;sv:瑞典语;sm:萨摩亚语;sr:塞尔维亚语;
+// st:塞索托语;si:僧伽罗语;eo:世界语;sk:斯洛伐克语;sl:斯洛文尼亚语;sw:斯瓦希里语;gd:苏格兰盖尔语;ceb:宿务语;so:索马里语;
+// tg:塔吉克语;te:泰卢固语;ta:泰米尔语;th:泰语;tr:土耳其语;cy:威尔士语;ur:乌尔都语;uk:乌克兰语;uz:乌兹别克语;es:西班牙语;
+// iw:希伯来语;el:希腊语;haw:夏威夷语;sd:信德语;hu:匈牙利语;sn:修纳语;hy:亚美尼亚语;ig:伊博语;it:意大利语;yi:意第绪语;
+// hi:印地语;su:印尼巽他语;id:印尼语;jw:印尼爪哇语;en:英语;yo:约鲁巴语;vi:越南语;zh-CN:中文;
+function google_translate($keyword, $tl = 'en', $sl = 'zh-CN')
+{
+	$tk         = get_tk($keyword);
+	$url        = 'https://translate.google.cn/translate_a/single';
+	$param      = 'client=t&sl='.$sl.'&tl='.$tl
+		.'&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&ssel=5&tsel=5&kc=1';
+	$param      .= '&tk='.$tk.'&q='.urlencode($keyword);
+	$url_all    = $url.'?'.$param;
+	$out        = file_get_contents($url_all);
+	$out        = json_decode($out, TRUE);
+	$out_string = '';
+	foreach ($out[0] as $item)
+	{
+		$out_string .= $item[0];
+	}
+
+	return $out_string;
+}
+
+function get_tkk()
+{
+	ini_set('display_errors', 'On');
+	error_reporting(E_ALL);
+	mb_internal_encoding("UTF-8");
+	$url   = "http://translate.google.cn";
+	$conts = file_get_contents($url);
+	$tkk   = 0;
+	if (preg_match("#TKK\=eval\('\(\(function\(\)\{var\s+a\\\\x3d(-?\d+);var\s+b\\\\x3d(-?\d+);return\s+(\d+)\+#isU",
+		$conts, $arr))
+	{
+		$tkk = $arr[3].'.'.($arr[1] + $arr[2]);
+	}
+
+	return $tkk;
+}
+
+function get_tk($a)
+{
+	$tkk = explode('.', get_tkk());
+	$b   = $tkk[0];
+
+	for ($d = array(), $e = 0, $f = 0; $f < mb_strlen($a, 'UTF-8'); $f ++)
+	{
+		$g = charCodeAt($a, $f);
+		if (128 > $g)
+		{
+			$d [$e ++] = $g;
+		}
+		else
+		{
+			if (2048 > $g)
+			{
+				$d [$e ++] = $g >> 6 | 192;
+			}
+			else
+			{
+				if (55296 == ($g & 64512) && $f + 1 < mb_strlen($a, 'UTF-8')
+					&& 56320 == (charCodeAt($a, $f + 1) & 64512)
+				)
+				{
+					$g         = 65536 + (($g & 1023) << 10) + (charCodeAt($a, ++ $f) & 1023);
+					$d [$e ++] = $g >> 18 | 240;
+					$d [$e ++] = $g >> 12 & 63 | 128;
+				}
+				else
+				{
+					$d [$e ++] = $g >> 12 | 224;
+					$d [$e ++] = $g >> 6 & 63 | 128;
+				}
+			}
+			$d [$e ++] = $g & 63 | 128;
+		}
+	}
+	$a = $b;
+	for ($e = 0; $e < count($d); $e ++)
+	{
+		$a += $d [$e];
+		$a = RL($a, '+-a^+6');
+	}
+	$a = RL($a, "+-3^+b+-f");
+	$a ^= $tkk[1];
+	if (0 > $a)
+	{
+		$a = ($a & 2147483647) + 2147483648;
+	}
+	$a = fmod($a, pow(10, 6));
+
+	return $a.".".($a ^ $b);
+}
+
+function charCodeAt($str, $index)
+{
+	$char = mb_substr($str, $index, 1, 'UTF-8');
+
+	if (mb_check_encoding($char, 'UTF-8'))
+	{
+		$ret = mb_convert_encoding($char, 'UTF-32BE', 'UTF-8');
+
+		return hexdec(bin2hex($ret));
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+function RL($a, $b)
+{
+	for ($c = 0; $c < strlen($b) - 2; $c += 3)
+	{
+		$d = $b{$c + 2};
+		$d = $d >= 'a' ? charCodeAt($d, 0) - 87 : intval($d);
+		$d = $b{$c + 1} == '+' ? shr32($a, $d) : $a << $d;
+		$a = $b{$c} == '+' ? ($a + $d & 4294967295) : $a ^ $d;
+	}
+
+	return $a;
+}
+
+function shr32($x, $bits)
+{
+
+	if ($bits <= 0)
+	{
+		return $x;
+	}
+	if ($bits >= 32)
+	{
+		return 0;
+	}
+
+	$bin = decbin($x);
+	$l   = strlen($bin);
+
+	if ($l > 32)
+	{
+		$bin = substr($bin, $l - 32, 32);
+	}
+	elseif ($l < 32)
+	{
+		$bin = str_pad($bin, 32, '0', STR_PAD_LEFT);
+	}
+
+	return bindec(str_pad(substr($bin, 0, 32 - $bits), 32, '0', STR_PAD_LEFT));
+}
+
+// 删除文件夹
+function deldir($dir)
+{
+	//先删除目录下的文件：
+	$dh = opendir($dir);
+	while ($file = readdir($dh))
+	{
+		if ($file != "." && $file != "..")
+		{
+			$fullpath = $dir."/".$file;
+			if ( ! is_dir($fullpath))
+			{
+				unlink($fullpath);
+			}
+			else
+			{
+				deldir($fullpath);
+			}
+		}
+	}
+	closedir($dh);
+	//删除当前文件夹：
+	if (rmdir($dir))
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+
+// 谷歌翻译 --end
+
+// 百度翻译 --start zh:中文   en:英语   ara:阿拉伯语
+// zh:中文;jp:日语;jpka:日语假名;th:泰语;fra:法语;;spa:西班牙语;kor:韩语;tr:土耳其语;vie:越南语;ms:马来语;
+// de:德语;ru:俄语;ir:伊朗语;ara:阿拉伯语;est:爱沙尼亚语;be:白俄罗斯语;bul:保加利亚语;hi:印地语;is:冰岛语;pl:波兰语;
+// fa:波斯语;dan:丹麦语;tl:菲律宾语;fin:芬兰语;nl:荷兰语;ca:加泰罗尼亚语;cs:捷克语;hr:克罗地亚语;lv:拉脱维亚语;
+// lt:立陶宛语;rom:罗马尼亚语;af:南非语;no:挪威语;pt_BR:巴西语;pt:葡萄牙语;swe:瑞典语;sr:塞尔维亚语;eo:世界语;
+// sk:斯洛伐克语;slo:斯洛文尼亚语;sw:斯瓦希里语;uk:乌克兰语;iw:希伯来语;el:希腊语;hu:匈牙利语;hy:亚美尼亚语;
+// it:意大利语;id:印尼语;sq:阿尔巴尼亚语;am:阿姆哈拉语;as:阿萨姆语;az:阿塞拜疆语;eu:巴斯克语;bn:孟加拉语;bs:波斯尼亚语;
+// gl:加利西亚语;ka:格鲁吉亚语;gu:古吉拉特语;ha:豪萨语;ig:伊博语;iu:因纽特语;ga:爱尔兰语;zu:祖鲁语;kn:卡纳达语;
+// kk:哈萨克语;ky:吉尔吉斯语;lb:卢森堡语;mk:马其顿语;mt:马耳他语;mi:毛利语;mr:马拉提语;ne:尼泊尔语;or:奥利亚语;
+// pa:旁遮普语;qu:凯楚亚语;tn:塞茨瓦纳语;si:僧加罗语;ta:泰米尔语;tt:塔塔尔语;te:泰卢固语;ur:乌尔都语;uz:乌兹别克语;
+// cy:威尔士语;yo:约鲁巴语;yue:粤语;wyw:文言文;cht:中文繁体;
+function translate($keyword, $to = 'en', $from = 'zh')
+{
+	$url  = 'http://fanyi.baidu.com/v2transapi';
+	$data = array(
+		'from'              => $from,
+		'to'                => $to,
+		'query'             => $keyword,
+		'transtype'         => 'translang',
+		'simple_means_flag' => '3',
+	);
+	$re   = send_post($url, $data);
+	$re   = json_decode($re, TRUE);
+//	$re   = $re['trans_result']['data'][0]['dst'];
+	$re = $re['trans_result']['data'];
+
+	$result = array();
+	foreach ($re as $one)
+	{
+		if ( ! $one)
+		{
+			continue;
+		}
+		$result[] = $one['dst'];
+	}
+
+	$result = implode("\n", $result);
+
+	return $result;
+}
+
+function send_post($url, $post_data)
+{
+
+	$postdata = http_build_query($post_data);
+	$options  = array(
+		'http' => array(
+			'method'  => 'POST',
+			'header'  => 'Content-type:application/x-www-form-urlencoded',
+			'content' => $postdata,
+			'timeout' => 15 * 60 // 超时时间（单位:s）
+		),
+	);
+	$context  = stream_context_create($options);
+	$result   = file_get_contents($url, FALSE, $context);
+
+	return $result;
+}
+
+// 百度翻译 --end
+
+// 百度翻译和谷歌翻译的不同语言的字符串的对应关系
+function trans_lang()
+{
+	$baidu_str  = 'zh:中文;jp:日语;jpka:日语假名;th:泰语;fra:法语;en:英语;spa:西班牙语;kor:韩语;tr:土耳其语;vie:越南语;ms:马来语;de:德语;ru:俄语;ir:伊朗语;ara:阿拉伯语;est:爱沙尼亚语;be:白俄罗斯语;bul:保加利亚语;hi:印地语;is:冰岛语;pl:波兰语;fa:波斯语;dan:丹麦语;tl:菲律宾语;fin:芬兰语;nl:荷兰语;ca:加泰罗尼亚语;cs:捷克语;hr:克罗地亚语;lv:拉脱维亚语;lt:立陶宛语;rom:罗马尼亚语;af:南非语;no:挪威语;pt_BR:巴西语;pt:葡萄牙语;swe:瑞典语;sr:塞尔维亚语;eo:世界语;sk:斯洛伐克语;slo:斯洛文尼亚语;sw:斯瓦希里语;uk:乌克兰语;iw:希伯来语;el:希腊语;hu:匈牙利语;hy:亚美尼亚语;it:意大利语;id:印尼语;sq:阿尔巴尼亚语;am:阿姆哈拉语;as:阿萨姆语;az:阿塞拜疆语;eu:巴斯克语;bn:孟加拉语;bs:波斯尼亚语;gl:加利西亚语;ka:格鲁吉亚语;gu:古吉拉特语;ha:豪萨语;ig:伊博语;iu:因纽特语;ga:爱尔兰语;zu:祖鲁语;kn:卡纳达语;kk:哈萨克语;ky:吉尔吉斯语;lb:卢森堡语;mk:马其顿语;mt:马耳他语;mi:毛利语;mr:马拉提语;ne:尼泊尔语;or:奥利亚语;pa:旁遮普语;qu:凯楚亚语;tn:塞茨瓦纳语;si:僧加罗语;ta:泰米尔语;tt:塔塔尔语;te:泰卢固语;ur:乌尔都语;uz:乌兹别克语;cy:威尔士语;yo:约鲁巴语;yue:粤语;wyw:文言文;cht:中文繁体;';
+	$google_str = 'zh-CN:中文;auto:检测语言;sq:阿尔巴尼亚语;ar:阿拉伯语;am:阿姆哈拉语;az:阿塞拜疆语;ga:爱尔兰语;et:爱沙尼亚语;eu:巴斯克语;be:白俄罗斯语;bg:保加利亚语;is:冰岛语;pl:波兰语;bs:波斯尼亚语;fa:波斯语;af:布尔语(南非荷兰语);da:丹麦语;de:德语;ru:俄语;fr:法语;tl:菲律宾语;fi:芬兰语;fy:弗里西语;km:高棉语;ka:格鲁吉亚语;gu:古吉拉特语;kk:哈萨克语;ht:海地克里奥尔语;ko:韩语;ha:豪萨语;nl:荷兰语;ky:吉尔吉斯语;gl:加利西亚语;ca:加泰罗尼亚语;cs:捷克语;kn:卡纳达语;co:科西嘉语;hr:克罗地亚语;ku:库尔德语;la:拉丁语;lv:拉脱维亚语;lo:老挝语;lt:立陶宛语;lb:卢森堡语;ro:罗马尼亚语;mg:马尔加什语;mt:马耳他语;mr:马拉地语;ml:马拉雅拉姆语;ms:马来语;mk:马其顿语;mi:毛利语;mn:蒙古语;bn:孟加拉语;my:缅甸语;hmn:苗语;xh:南非科萨语;zu:南非祖鲁语;ne:尼泊尔语;no:挪威语;pa:旁遮普语;pt:葡萄牙语;ps:普什图语;ny:齐切瓦语;ja:日语;sv:瑞典语;sm:萨摩亚语;sr:塞尔维亚语;st:塞索托语;si:僧伽罗语;eo:世界语;sk:斯洛伐克语;sl:斯洛文尼亚语;sw:斯瓦希里语;gd:苏格兰盖尔语;ceb:宿务语;so:索马里语;tg:塔吉克语;te:泰卢固语;ta:泰米尔语;th:泰语;tr:土耳其语;cy:威尔士语;ur:乌尔都语;uk:乌克兰语;uz:乌兹别克语;es:西班牙语;iw:希伯来语;el:希腊语;haw:夏威夷语;sd:信德语;hu:匈牙利语;sn:修纳语;hy:亚美尼亚语;ig:伊博语;it:意大利语;yi:意第绪语;hi:印地语;su:印尼巽他语;id:印尼语;jw:印尼爪哇语;en:英语;yo:约鲁巴语;vi:越南语;zh-CN:中文;';
+
+	$baidu_arr  = explode(';', $baidu_str);
+	$google_arr = explode(';', $google_str);
+
+	$baidu_arr_new = array();
+	foreach ($baidu_arr as $item)
+	{
+		list($k, $v) = explode(':', $item);
+		$baidu_arr_new[$k] = $v;
+	}
+	$google_arr_new = array();
+	foreach ($google_arr as $item)
+	{
+		list($k, $v) = explode(':', $item);
+		$google_arr_new[$k] = $v;
+	}
+
+	$trans = array();
+
+	foreach ($baidu_arr_new as $baidu_key => $value)
+	{
+		if ($google_key = array_search($value, $google_arr_new))
+		{
+			$trans[$baidu_key] = $google_key;
+			unset($baidu_arr_new[$baidu_key], $google_arr_new[$google_key]);
+		}
+	}
+	dump($trans);
+
+	dump($baidu_arr_new);
+	dump($google_arr_new);
+}
