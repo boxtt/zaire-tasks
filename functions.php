@@ -1,5 +1,8 @@
 <?php
 
+// 设置时区为上海
+ini_set('date.timezone', 'Asia/Shanghai');
+
 function get_ip()
 {
 	// http代理和https代理是不一样的
@@ -55,7 +58,7 @@ function get_str($i)
 	return $str;
 }
 
-function get_cookie($url, $user_agent, $ip, $port)
+function get_cookie($url, $user_agent, $ip = NULL, $port = NULL)
 {
 	// 根据地址获取百度网盘的真正地址
 	$ch = curl_init($url);
@@ -74,11 +77,14 @@ function get_cookie($url, $user_agent, $ip, $port)
 	curl_setopt($ch, CURLOPT_HEADER, TRUE);
 	curl_setopt($ch, CURLOPT_NOBODY, TRUE);
 
-	curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC); //代理认证模式
-	curl_setopt($ch, CURLOPT_PROXY, $ip.':'.$port);
+	if ($ip && $port)
+	{
+		curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC); //代理认证模式
+		curl_setopt($ch, CURLOPT_PROXY, $ip.':'.$port);
 //	curl_setopt($ch, CURLOPT_PROXYPORT, $port);
 ////curl_setopt($ch, CURLOPT_PROXYUSERPWD, ":"); //http代理认证帐号，username:password的格式
-	curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); //使用http代理模式
+		curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); //使用http代理模式
+	}
 
 	curl_setopt($ch, CURLOPT_REFERER, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -99,7 +105,14 @@ function get_cookie($url, $user_agent, $ip, $port)
 		if ($value && strpos($value, ':') !== FALSE)
 		{
 			list($k, $v) = explode(':', $value, 2);
-			$headers[$k] = $v;
+			if (isset($headers[$k]))
+			{
+				$headers[$k] .= ';'.$v;
+			}
+			else
+			{
+				$headers[$k] = $v;
+			}
 		}
 	}
 	$cookie_tmp = $headers['Set-Cookie'];
@@ -107,7 +120,7 @@ function get_cookie($url, $user_agent, $ip, $port)
 	return $cookie_tmp;
 }
 
-function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h, $ip, $port)
+function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h, $ip = NULL, $port = NULL)
 {
 	/*if ($headers['Set-Cookie'])
 	{
@@ -166,10 +179,13 @@ function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h,
 	curl_setopt($ch, CURLOPT_POST, TRUE);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
-	curl_setopt($ch, CURLOPT_PROXY, $ip);
-	curl_setopt($ch, CURLOPT_PROXYPORT, $port);
+	if ($ip && $port)
+	{
+		curl_setopt($ch, CURLOPT_PROXY, $ip);
+		curl_setopt($ch, CURLOPT_PROXYPORT, $port);
 //curl_setopt($ch, CURLOPT_PROXYUSERPWD, ":"); //http代理认证帐号，username:password的格式
-	curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); //使用http代理模式
+		curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); //使用http代理模式
+	}
 
 //	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept-Encoding: gzip, deflate'));
 	curl_setopt($ch, CURLOPT_ENCODING, 'gzip,deflate');
@@ -325,7 +341,7 @@ function xici_curl($url)
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [
 		'Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-//		'Accept-Encoding:gzip, deflate',
+		//		'Accept-Encoding:gzip, deflate',
 		'Accept-Language:zh-CN,zh;q=0.9',
 		'Cache-Control:no-cache',
 		'Host:www.xicidaili.com',
@@ -764,7 +780,8 @@ function check_phone($phone)
 // hi:印地语;su:印尼巽他语;id:印尼语;jw:印尼爪哇语;en:英语;yo:约鲁巴语;vi:越南语;zh-CN:中文;
 function google_translate($keyword, $tl = 'en', $sl = 'zh-CN')
 {
-	$tk         = get_tk($keyword);
+	$tkk        = get_tkk();
+	$tk         = get_tk_or_sign($keyword, $tkk);
 	$url        = 'https://translate.google.cn/translate_a/single';
 	$param      = 'client=t&sl='.$sl.'&tl='.$tl
 		.'&hl=zh-CN&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&ssel=5&tsel=5&kc=1';
@@ -798,9 +815,9 @@ function get_tkk()
 	return $tkk;
 }
 
-function get_tk($a)
+function get_tk_or_sign($a, $tkk)
 {
-	$tkk = explode('.', get_tkk());
+	$tkk = explode('.', $tkk);
 	$b   = $tkk[0];
 
 	for ($d = array(), $e = 0, $f = 0; $f < mb_strlen($a, 'UTF-8'); $f ++)
@@ -953,18 +970,65 @@ function deldir($dir)
 // kk:哈萨克语;ky:吉尔吉斯语;lb:卢森堡语;mk:马其顿语;mt:马耳他语;mi:毛利语;mr:马拉提语;ne:尼泊尔语;or:奥利亚语;
 // pa:旁遮普语;qu:凯楚亚语;tn:塞茨瓦纳语;si:僧加罗语;ta:泰米尔语;tt:塔塔尔语;te:泰卢固语;ur:乌尔都语;uz:乌兹别克语;
 // cy:威尔士语;yo:约鲁巴语;yue:粤语;wyw:文言文;cht:中文繁体;
+// 现在的问题是，总是998错误，好像是cookie过期
 function translate($keyword, $to = 'en', $from = 'zh')
 {
+//	return $keyword;
+	$user_agent = get_user_agent();
+	$cookie_url = 'http://fanyi.baidu.com/';
+	list($cookie, $token, $gtk) = get_cookie_and_token_and_gtk($cookie_url, $user_agent);
+	$sign = get_tk_or_sign($keyword, $gtk);
+
 	$url  = 'http://fanyi.baidu.com/v2transapi';
 	$data = array(
 		'from'              => $from,
 		'to'                => $to,
 		'query'             => $keyword,
-		'transtype'         => 'translang',
+		'transtype'         => 'realtime',
 		'simple_means_flag' => '3',
+		'sign'              => $sign,
+		'token'             => $token,
 	);
-	$re   = send_post($url, $data);
-	$re   = json_decode($re, TRUE);
+	$data = http_build_query($data);
+
+	$ch = curl_init($url);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, [
+		'Accept:*/*',
+		'Accept-Encoding:gzip, deflate',
+		'Accept-Language:zh-CN,zh;q=0.9',
+		'Cache-Control:no-cache',
+		'Connection:keep-alive',
+		//		'Content-Length:116',
+		'Content-Type:application/x-www-form-urlencoded; charset=UTF-8',
+		'Cookie:'.$cookie,
+		'Host:fanyi.baidu.com',
+		'Origin:http://fanyi.baidu.com',
+		'Pragma:no-cache',
+		'Referer:http://fanyi.baidu.com/',
+		'User-Agent:'.$user_agent,
+		'X-Requested-With:XMLHttpRequest',
+	]);
+	curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // 跳过证书检查
+	// 设置post方法
+	curl_setopt($ch, CURLOPT_POST, TRUE);
+	// 设置post数据
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+	// 获取响应头
+//	curl_setopt($ch, CURLOPT_HEADER, TRUE);
+
+	curl_setopt($ch, CURLOPT_REFERER, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 设置超时限制防止死循环
+
+	// 返回的error错误代码
+	//997, 没有cookie；998，cookie过期；999，内部错误
+
+	$re = curl_exec($ch);
+
+	return $re;
+	$re = json_decode($re, TRUE);
 //	$re   = $re['trans_result']['data'][0]['dst'];
 	$re = $re['trans_result']['data'];
 
@@ -981,6 +1045,105 @@ function translate($keyword, $to = 'en', $from = 'zh')
 	$result = implode("\n", $result);
 
 	return $result;
+}
+
+function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NULL)
+{
+	// 根据地址获取百度网盘的真正地址
+	$ch = curl_init($url);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, [
+		'Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+		'Accept-Encoding:gzip, deflate',
+		'Accept-Language:zh-CN,zh;q=0.9',
+		'Cache-Control:no-cache',
+		'Connection:keep-alive',
+		'Host:fanyi.baidu.com',
+		'Pragma:no-cache',
+		'Upgrade-Insecure-Requests:1',
+		'User-Agent:'.$user_agent,
+	]);
+//	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+//	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // 跳过证书检查
+	// 只获取响应头就行了
+	curl_setopt($ch, CURLOPT_HEADER, TRUE);
+//	curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+
+	if ($ip && $port)
+	{
+		curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_BASIC); //代理认证模式
+		curl_setopt($ch, CURLOPT_PROXY, $ip.':'.$port);
+//	curl_setopt($ch, CURLOPT_PROXYPORT, $port);
+////curl_setopt($ch, CURLOPT_PROXYUSERPWD, ":"); //http代理认证帐号，username:password的格式
+		curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP); //使用http代理模式
+	}
+
+	curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
+
+	curl_setopt($ch, CURLOPT_REFERER, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 设置超时限制防止死循环
+	$result = curl_exec($ch);
+
+	// 获得响应结果里的：头大小
+	$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+	curl_close($ch);
+	// 根据头大小去获取头信息内容
+	$header = substr($result, 0, $headerSize);
+
+	$result = substr($result, $headerSize + 1);
+	$gtk    = 0;
+	if (preg_match("/window\.gtk\s?=\s?\'([\d\.]*)\'/", $result, $arr))
+	{
+		$gtk = $arr[1];
+	}
+	$token = '';
+	// token: '9b8bb341109338ba7e875bd9a9dd88ba',
+	if (preg_match("/token\:\s?\'([\w]*)\',/", $result, $arr))
+	{
+		$token = $arr[1];
+	}
+
+	$header_arr = explode(PHP_EOL, $header);
+	$headers    = [];
+	foreach ($header_arr as $value)
+	{
+		$value = trim($value);
+		if ($value && strpos($value, ':') !== FALSE)
+		{
+			list($k, $v) = explode(':', $value, 2);
+			if (isset($headers[$k]))
+			{
+				$headers[$k] .= ';'.$v;
+			}
+			else
+			{
+				$headers[$k] = $v;
+			}
+		}
+	}
+	$cookie_tmp = $headers['Set-Cookie'];
+
+	return [$cookie_tmp, $token, $gtk];
+}
+
+function get_token_and_gtk()
+{
+	$url   = "http://fanyi.baidu.com";
+	$conts = file_get_contents($url);
+	$gtk   = 0;
+	//<script>window.bdstoken = '';window.gtk = '320305.131321201';</script>
+	if (preg_match("/window\.gtk\s?=\s?\'([\d\.]*)\'/", $conts, $arr))
+	{
+		$gtk = $arr[1];
+	}
+	$token = '';
+	// token: '9b8bb341109338ba7e875bd9a9dd88ba',
+	if (preg_match("/token\:\s?\'([\w]*)\',/", $conts, $arr))
+	{
+		$token = $arr[1];
+	}
+
+	return [$token, $gtk];
 }
 
 function send_post($url, $post_data)
@@ -1040,3 +1203,364 @@ function trans_lang()
 	dump($baidu_arr_new);
 	dump($google_arr_new);
 }
+
+// 抓取数据 --start
+
+/**
+ * 访问网页
+ *
+ * @param $url
+ *
+ * @return mixed
+ */
+function getSslPage($url)
+{
+	/*  http://www.manongjc.com/article/1428.html */
+	$ch = curl_init();
+
+	$user_agent      = array(
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1",
+		"Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6",
+		"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.6 (KHTML, like Gecko) Chrome/20.0.1090.0 Safari/536.6",
+		"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/19.77.34.5 Safari/537.1",
+		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.9 Safari/536.5",
+		"Mozilla/5.0 (Windows NT 6.0) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.36 Safari/536.5",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3",
+		"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3",
+		"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3",
+		"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3",
+		"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3",
+		"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3",
+		"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 (KHTML, like Gecko) Chrome/19.0.1061.0 Safari/536.3",
+		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24",
+		"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24",
+		"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
+		"Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6 (.NET CLR 3.5.30729)",
+		"Mozilla/5.0 (iPhone; CPU iPhone OS 7_1_2 like Mac OS X) App leWebKit/537.51.2 (KHTML, like Gecko) Version/7.0 Mobile/11D257 Safari/9537.53",
+		"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.8) Gecko Fedora/1.9.0.8-1.fc10 Kazehakase/0.5.6",
+		"Mozilla/5.0 (X11; Linux i686; U;) Gecko/20070322 Kazehakase/0.4.5",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.71 Safari/537.1 LBBROWSER",
+		"Opera/9.25 (Windows NT 5.1; U; en)",
+		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11",
+		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; QQDownload 732; .NET4.0C; .NET4.0E)",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11",
+		"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; SV1; QQDownload 732; .NET4.0C; .NET4.0E; 360SE)",
+		"Mozilla/4.0 (compatible; MSIE 7.0b; Windows NT 5.2; .NET CLR 1.1.4322; .NET CLR 2.0.50727; InfoPath.2; .NET CLR 3.0.04506.30)",
+		"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
+		"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.8) Gecko Fedora/1.9.0.8-1.fc10 Kazehakase/0.5.6",
+		"Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.71 Safari/537.1 LBBROWSER",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1",
+		"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)",
+		"Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12",
+		"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; QQDownload 732; .NET4.0C; .NET4.0E; LBBROWSER)",
+		"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.89 Safari/537.1",
+		"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
+	);
+	$count           = count($user_agent);
+	$rand            = rand(1, $count);
+	$user_agent_rand = $user_agent[$rand - 1];
+
+	// 设置浏览器的特定header
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		"User-Agent: $user_agent_rand",
+		"Accept-Language: en-us,en;q=0.5",
+		"Connection: keep-alive",
+		"Accept: */*",
+		"Referrer: $url",
+	));
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+	curl_setopt($ch, CURLOPT_HEADER, FALSE);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_REFERER, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	$result = curl_exec($ch);
+	curl_close($ch);
+
+	return $result;
+}
+
+// 阿里巴巴1688上的商品，国际站的是alibaba
+function get_1688($url)
+{
+	die('ok');
+//	$url = 'https://detail.1688.com/offer/556564577668.html?spm=a2604.10528227.j5xw6k7a.1.og5TLL';
+//	$url = 'https://detail.1688.com/offer/538544179434.html?spm=b26110380.sw1688.mof001.13.PtIdYp';
+//	$url = 'https://www.aliexpress.com/item/New-2016-Brand-Autumn-Winter-Sudaderas-Hombre-Thick-Velvet-Sweatshirt-Men-Sport-Baseball-Soft-Shell-Mens/32699113679.html?spm=2114.search0103.3.45.IGTqs5&ws_ab_test=searchweb0_0,searchweb201602_1_10152_10151_10065_10344_10068_10345_10342_10343_10340_10341_10541_10562_10084_10083_10307_10175_10539_10312_10059_10313_10314_10534_10533_100031_10604_10603_10103_10594_10557_10596_10595_10142_10107,searchweb201603_25,ppcSwitch_5&btsid=3f4c49e7-a036-4ef1-8ee4-ef2dba60bc2b&algo_expid=170b32a2-8552-4dd7-b6ea-63f0253689f2-5&algo_pvid=170b32a2-8552-4dd7-b6ea-63f0253689f2&rmStoreLevelAB=3';
+	try
+	{
+		$html = getSslPage($url);
+//			$html = file_get_contents('./ali.html');
+		dump($html);
+		file_put_contents('./ali.html', $html);
+		die('ok');
+		$html = iconv('CP936', 'UTF-8', $html);
+		// 获取标题
+		$title_preg = '/<h1\sclass=\"d-title\">([^{]*?)<\/h1>/';
+		preg_match_all($title_preg, $html, $titles);
+		$title = $titles[1];
+		dump($titles);
+
+		// 获取到的是小图，改一下名字就是大图了
+		$pics_preg = '/\"(https\:\/\/cbu01\.alicdn\.com\/img.*?\.60x60\.jpg)\"/';
+		preg_match_all($pics_preg, $html, $pics);
+		$pics = array_map(function ($pic) {
+			return str_replace('60x60', '400x400', $pic);
+		}, $pics[1]);
+		dump($pics);
+
+		// 获取详情图的地址
+		$detail_preg = '/data-tfs-url=\"(.*)\"\s/';
+		preg_match_all($detail_preg, $html, $details);
+		dump($details[1]);
+		$json = getSslPage($details[1][0]);
+//			dump($json);
+		$img_preg = '/\\\"(https:\/\/cbu.*?\.jpg)\\\"/';
+		preg_match_all($img_preg, $json, $detail_pics);
+		dump($detail_pics[1]);
+
+		// 获取商品描述
+		$desc_preg = '/<td\sclass=\"de-feature\">([^<]*?)<\/td>\s*<td\sclass=\"de-value\">([^<]*?)<\/td>/';
+		preg_match_all($desc_preg, $html, $descs);
+//			dump($descs[1]);
+//			dump($descs[2]);
+		$count = count($descs[0]);
+		$desc  = '';
+		for ($i = 0; $i < $count; $i ++)
+		{
+			$desc .= $descs[1][$i].':'.$descs[2][$i]."\n";
+		}
+		dump($desc);
+
+		//属性，属性值
+
+		file_put_contents('./ali.html', $html);
+	}
+	catch (Exception $e)
+	{
+		dump($e->getMessage());
+	}
+}
+
+// 速卖通网站上的商品
+function get_aliexpress($url)
+{
+	$data = array();
+	try
+	{
+//		$url  = 'https://www.aliexpress.com/item/New-2016-Brand-Autumn-Winter-Sudaderas-Hombre-Thick-Velvet-Sweatshirt-Men-Sport-Baseball-Soft-Shell-Mens/32699113679.html?spm=2114.search0103.3.45.IGTqs5&ws_ab_test=searchweb0_0,searchweb201602_1_10152_10151_10065_10344_10068_10345_10342_10343_10340_10341_10541_10562_10084_10083_10307_10175_10539_10312_10059_10313_10314_10534_10533_100031_10604_10603_10103_10594_10557_10596_10595_10142_10107,searchweb201603_25,ppcSwitch_5&btsid=3f4c49e7-a036-4ef1-8ee4-ef2dba60bc2b&algo_expid=170b32a2-8552-4dd7-b6ea-63f0253689f2-5&algo_pvid=170b32a2-8552-4dd7-b6ea-63f0253689f2&rmStoreLevelAB=3';
+		$html = getSslPage($url);
+//		file_put_contents('./aliexpress.html', $html);
+//		$html = file_get_contents('./aliexpress.html');
+		// 获取标题
+		$title_preg = '/<h1\sclass=\"product-name\"\sitemprop=\"name\">([^{]*?)<\/h1>/';
+		preg_match_all($title_preg, $html, $titles);
+		$title = $titles[1][0] ?: '';
+		if (empty($title))
+		{
+			return array();
+		}
+		$data['note_l1']     = translate($title, 'zh', 'en') ?: $title;
+		$data['note_l4']     = translate($title, 'ara', 'en') ?: $title;
+		$data['note_l2']     = $title;
+		$data['pro_name_l1'] = translate($title, 'zh', 'en') ?: $title;
+		$data['pro_name_l4'] = translate($title, 'ara', 'en') ?: $title;
+		$data['pro_name_l2'] = $title;
+		/*$data['note_l1']     = google_translate($title, 'zh-CN', 'en') ?: $title;
+		$data['note_l4']     = google_translate($title, 'ar', 'en') ?: $title;
+		$data['note_l2']     = $title;
+		$data['pro_name_l1'] = google_translate($title, 'zh-CN', 'en') ?: $title;
+		$data['pro_name_l4'] = google_translate($title, 'ar', 'en') ?: $title;
+		$data['pro_name_l2'] = $title;*/
+
+		// 获取到的是小图，改一下名字就是大图了，这里面会有货物里面的图
+		$pics_preg = '/\ssrc=\"(https:\/\/ae01\.alicdn\.com.*?50x50\.jpg)\"\/><\/span>/';
+		preg_match_all($pics_preg, $html, $pics);
+		$pics           = array_map(function ($pic) {
+			return str_replace('50x50', '640x640', $pic);
+		}, $pics[1]);
+		$data['banner'] = $pics;
+		$data['pic']    = $pics[0];
+
+		// 获取详情图的地址
+		$detail_preg = '/window\.runParams\.detailDesc\s?=\s?\"(.*)\"/';
+		preg_match_all($detail_preg, $html, $details);
+		$json     = getSslPage($details[1][0]);
+		$img_preg = '/src=\"(https:.*?\.jpg)/';
+		preg_match_all($img_preg, $json, $detail_pics);
+		if (empty($detail_pics))
+		{
+			return array();
+		}
+		$data['details'] = $detail_pics[1];
+
+		// 获取商品描述
+		$desc_preg = '/<span\sclass=\"propery\-title\">([^<]*?)<\/span>\s*<span\sclass=\"propery-des\"\stitle=\"(.*?)\">([^<]*?)<\/span>/';
+		preg_match_all($desc_preg, $html, $descs);
+		$count = count($descs[0]);
+		$desc  = '';
+		for ($i = 0; $i < $count; $i ++)
+		{
+			$desc .= $descs[1][$i].':'.$descs[2][$i]."\n";
+		}
+		$data['desc_l1'] = translate($desc, 'zh', 'en') ?: $desc;
+		$data['desc_l2'] = $desc;
+		$data['desc_l4'] = translate($desc, 'ara', 'en') ?: $desc;
+		/*$data['desc_l1'] = google_translate($desc, 'zh-CN', 'en') ?: $desc;
+		$data['desc_l2'] = $desc;
+		$data['desc_l4'] = google_translate($desc, 'ar', 'en') ?: $desc;*/
+
+		//属性，属性值
+//		$goods_preg = '/j\-product\-info\-sku[\s\S.]*?class=\"p\-property\-item([.\n\S\s]*?)<\/dl>[\s\S]*?<div\sclass=\"buynow-custom\">/';
+		$goods_preg = '/<dl\sclass=\"p\-property\-item\">([\s\S.]*?)<\/dl>/';
+		preg_match_all($goods_preg, $html, $matches);
+		$matches          = $matches[1];
+		$attr_name_preg   = '/<dt\sclass=\"p\-item\-title\">(.*)<\/dt>/';
+		$attr_value_preg1 = '/<span>(.*)<\/span>/';
+		$attr_value_preg2 = '/title=\"(.*)\"\shref/';
+		$goods            = array();
+		foreach ($matches as $match)
+		{
+			preg_match_all($attr_name_preg, $match, $attr_names);
+			preg_match_all($attr_value_preg1, $match, $attr_values);
+			$attr_names  = $attr_names[1];
+			$attr_values = $attr_values[1];
+			if (empty($attr_values))
+			{
+				preg_match_all($attr_value_preg2, $match, $attr_values);
+				$attr_values = $attr_values[1];
+			}
+			$attr_names = array_map(function ($attr_name) {
+				return str_replace(':', '', $attr_name);
+			}, $attr_names);
+			$goods[]    = array('key' => $attr_names, 'value' => $attr_values);
+		}
+		if (empty($goods))
+		{
+			return array();
+		}
+		$data['goods'] = $goods;
+
+		$price_preg = '/<span\sitemprop=\"highPrice\">([\.\d]*)<\/span>/';
+		preg_match_all($price_preg, $html, $prices);
+		$price = $prices[1][0];
+		if (empty($price))
+		{
+			$pics_preg = '/itemprop=\"price\">(.*)<\/span>/';
+			preg_match_all($pics_preg, $html, $prices);
+			$price = $prices[1][0];
+		}
+		$data['price'] = $price;
+	}
+	catch (Exception $e)
+	{
+		dump($e->getMessage());
+	}
+
+	return $data;
+}
+
+function get_souq_address()
+{
+	$url     = 'https://saudi.souq.com/sa-en/account_addresses.php';
+	$data    = array(
+		'action'           => 'select_area',
+		'source'           => 'account_addresses',
+		'hitsCfs'          => '0532bf00fed56d310bbf4692e9a82c9c',
+		'country_iso_code' => 'sa',
+		'city_iso_code'    => 'RUH',
+		'r_rul'            => 'https://saudi.souq.com/sa-en/account_addresses.php?action=add',
+		'hitsCfsMeta'      => '3ZInkE80iAtOS20AS5eyKk8WOwcmEXRk/Bd3lBiYDqKS36ElBnggdU/Y1rtuT0M/3Om0cf+fSgD4wNefXHqyeVGDaIlSkc0Zw644TzmZqujaPX+vplYUs3pGZOF6/wpfZ1pOW5VKzgH0/pUb1gpUzJXW/Wup3Bcusd/ouNwlrTM=',
+	);
+	$headers = array(
+		'Accept:application/json, text/javascript, */*; q=0.01',
+		'Accept-Encoding:gzip, deflate, br',
+		'Accept-Language:zh-CN,zh;q=0.9',
+		'Cache-Control:no-cache',
+		'Connection:keep-alive',
+		//			'Content-Length:399',
+		'Content-Type:application/x-www-form-urlencoded; charset=UTF-8',
+		'Cookie:c_Ident=15122279371194; ab.storage.deviceId.2e4ae497-9aed-4a69-8a2d-91cd396ab384=%7B%22g%22%3A%22e7fbb262-ec98-c3b6-1e64-4bb40ae0afb1%22%2C%22c%22%3A1512227942144%2C%22l%22%3A1512227942144%7D; ab.storage.userId.2e4ae497-9aed-4a69-8a2d-91cd396ab384=%7B%22g%22%3A%2217220336%22%2C%22c%22%3A1512227997717%2C%22l%22%3A1512227997717%7D; COCODE_SA=sa; tree_top_nav_sa_en_=1; _ga=GA1.3.761958626.1512227942; _gid=GA1.3.507996180.1512227942; s_ev21=%5B%5B%27Typed%2FBookmarked%27%2C%271512227968468%27%5D%2C%5B%27Other%2520Natural%2520Referrers%27%2C%271512293091353%27%5D%5D; s_ev22=%5B%5B%27Typed%2FBookmarked%253A%2520HomePage%27%2C%271512227968468%27%5D%2C%5B%27Other%2520Natural%2520Referrers%253A%2520www.mijing.com%27%2C%271512293091354%27%5D%5D; idc=17220336; is_logged_in=1; NSC_tpvr-72.52.8.197-80=ffffffff373be72f45525d5f4f58455e445a4a423660; remember_key=0b8e7c6ae66e428c26f8c39685aed53c; PHPSESSID=59r56vnml9jh3c664egurkkeo7lao2lu; bShowMobileVerificationOnceADay=1; customer_logged_in=0; _dc_gtm_UA-31806200-1=1; ab.storage.sessionId.2e4ae497-9aed-4a69-8a2d-91cd396ab384=%7B%22g%22%3A%22611b26cb-c459-affe-7159-9a207944766b%22%2C%22e%22%3A1512295379002%2C%22c%22%3A1512291284858%2C%22l%22%3A1512293579002%7D; PLATEFORMC=sa; PLATEFORML=en; s_sq=%5B%5BB%5D%5D; s_cc=true; _ga=GA1.2.761958626.1512227942; _gid=GA1.2.507996180.1512227942; s_ppvl=CreateNewAddressPage%2C50%2C50%2C1200%2C1088%2C769%2C1600%2C900%2C1%2CP; _ceg.s=p0dp7a; _ceg.u=p0dp7a; s_fid=38CBD40846A75CB4-2F63EBC9530DCED5; s_depth=6; s_source=%5B%5BB%5D%5D; s_nr_lifetime=1512293596403-Repeat; s_nr_year=1512293596404-Repeat; s_nr_quarter=1512293596404-Repeat; s_vs=1; s_dl=1; s_ppv=CreateNewAddressPage%2C56%2C50%2C1335%2C1088%2C769%2C1600%2C900%2C1%2CP',
+		'Host:saudi.souq.com',
+		'Origin:https://saudi.souq.com',
+		'Pragma:no-cache',
+		'Referer:https://saudi.souq.com/sa-en/account_addresses.php?action=add',
+		'User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36',
+		'X-Requested-With:XMLHttpRequest',
+	);
+	$ch      = curl_init();
+	$options = array(
+		CURLOPT_URL            => $url,
+		CURLOPT_POST           => TRUE,
+		CURLOPT_POSTFIELDS     => $data,
+		CURLOPT_HTTPHEADER     => $headers,
+		CURLOPT_REFERER        => $url,
+		CURLOPT_RETURNTRANSFER => TRUE,
+		CURLOPT_SSL_VERIFYPEER => FALSE,
+		CURLOPT_SSL_VERIFYHOST => 2,
+	);
+	curl_setopt_array($ch, $options);
+	$output = curl_exec($ch);
+	$output = gzdecode($output);
+	file_put_contents('./test.html', $output);
+	dump(curl_error($ch));
+	dump($output);
+	curl_close($ch);
+}
+
+/**
+ * postman 右上角有个code，可以将postman的请求转换成各种语言的代码段，这个功能很强大啊
+ *
+ * @param $c
+ *
+ * @return mixed|string
+ */
+function postman_souq($c)
+{
+	$curl = curl_init();
+
+	curl_setopt_array($curl, array(
+		CURLOPT_URL            => "https://saudi.souq.com/sa-en/account_addresses.php",
+		CURLOPT_RETURNTRANSFER => TRUE,
+		CURLOPT_ENCODING       => "",
+		CURLOPT_MAXREDIRS      => 10,
+		CURLOPT_TIMEOUT        => 30,
+		CURLOPT_SSL_VERIFYPEER => FALSE,
+		CURLOPT_SSL_VERIFYHOST => 2,
+		CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+		CURLOPT_CUSTOMREQUEST  => "POST",
+		CURLOPT_POSTFIELDS     => "action=select_area&source=account_addresses&hitsCfs=bfb973ead536e11c287f8b249ce124fe&country_iso_code=ae&city_iso_code="
+			.$c
+			."&r_url=https%3A%2F%2Fsaudi.souq.com%2Fsa-en%2Faccount_addresses.php%3Faction%3Dadd&hitsCfsMeta=HIyY4HrQXlIjDdhaYz7S0fqDSockplN3UCIiHuUNg%2BNZjseymAqFtWRCsXarVzQ%2FXv0jM%2BY91ofjNl2oT8vQJHxydTO87bksRpz%2BjRATWG8Y7Q3vBSXZRa%2BS3zDiEWJHXETHfh4j3mJiNCDorgCVypsxPP9w94kRmxbUpBSp%2Bis%3D",
+		CURLOPT_HTTPHEADER     => array(
+			"cache-control: no-cache",
+			"content-type: application/x-www-form-urlencoded",
+			"cookie: c_Ident=15122279371194; ab.storage.deviceId.2e4ae497-9aed-4a69-8a2d-91cd396ab384=%7B%22g%22%3A%22e7fbb262-ec98-c3b6-1e64-4bb40ae0afb1%22%2C%22c%22%3A1512227942144%2C%22l%22%3A1512227942144%7D; COCODE_SA=sa; s_ev21=%5B%5B%27Typed%2FBookmarked%27%2C%271512227968468%27%5D%2C%5B%27Other%2520Natural%2520Referrers%27%2C%271512293091353%27%5D%5D; s_ev22=%5B%5B%27Typed%2FBookmarked%253A%2520HomePage%27%2C%271512227968468%27%5D%2C%5B%27Other%2520Natural%2520Referrers%253A%2520www.mijing.com%27%2C%271512293091354%27%5D%5D; tree_top_nav_sa_en_=1; NSC_tpvr-72.52.8.197-80=ffffffff3540528845525d5f4f58455e445a4a423660; ab.storage.userId.2e4ae497-9aed-4a69-8a2d-91cd396ab384=%7B%22g%22%3A%2213789019%22%2C%22c%22%3A1512296553545%2C%22l%22%3A1512296553545%7D; _ga=GA1.3.761958626.1512227942; _gid=GA1.3.507996180.1512227942; PHPSESSID=ie5icsu9e6pjcgh96m64no67v3rr7o8o; remember_key=eabed95102e389a0af048c83a50df2b7; idc=13789019; is_logged_in=1; customer_logged_in=0; ab.storage.sessionId.2e4ae497-9aed-4a69-8a2d-91cd396ab384=%7B%22g%22%3A%22f08d5924-7ba7-eaa1-6033-e8606c866eed%22%2C%22e%22%3A1512298445422%2C%22c%22%3A1512296553546%2C%22l%22%3A1512296645422%7D; s_sq=%5B%5BB%5D%5D; s_cc=true; _ga=GA1.2.761958626.1512227942; _gid=GA1.2.507996180.1512227942; s_ppvl=CreateNewAddressPage%2C62%2C62%2C1502%2C1088%2C769%2C1600%2C900%2C1%2CP; _ceg.s=p0drkp; _ceg.u=p0drkp; PLATEFORMC=sa; PLATEFORML=en; s_fid=38CBD40846A75CB4-2F63EBC9530DCED5; s_depth=14; s_source=%5B%5BB%5D%5D; s_nr_lifetime=1512296953293-Repeat; s_nr_year=1512296953293-Repeat; s_nr_quarter=1512296953294-Repeat; s_vs=1; s_dl=1; s_ppv=CreateNewAddressPage%2C62%2C62%2C1502%2C1088%2C769%2C1600%2C900%2C1%2CP",
+			"postman-token: 1e852844-f005-eae7-3597-900f20a2edbe",
+		),
+	));
+
+	$response = curl_exec($curl);
+	$err      = curl_error($curl);
+
+	curl_close($curl);
+
+	if ($err)
+	{
+		return "cURL Error #:".$err;
+	}
+	else
+	{
+		return $response;
+	}
+}
+
+
+// 抓取数据 --end
+
