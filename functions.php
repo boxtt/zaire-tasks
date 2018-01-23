@@ -973,7 +973,7 @@ function deldir($dir)
 // 现在的问题是，总是998错误，好像是cookie过期
 function translate($keyword, $to = 'en', $from = 'zh')
 {
-//	return $keyword;
+	return $keyword;
 	$user_agent = get_user_agent();
 	$cookie_url = 'http://fanyi.baidu.com/';
 	list($cookie, $token, $gtk) = get_cookie_and_token_and_gtk($cookie_url, $user_agent);
@@ -1268,11 +1268,24 @@ function getSslPage($url)
 
 	// 设置浏览器的特定header
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+//		':authority:www.aliexpress.com',
+//		':method:GET',
+//		':path:/store/product/ROXI-TOP-Exquisite-Champagne-Rings-platinum-rose-gold-plated-with-zirconfashion-Environmental-Micro-Inserted-Jewelry-FULL/314050_32524990479.html',
+//		':scheme:https',
+//		'accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+//		'accept-encoding:gzip, deflate, br',
+//		'accept-language:zh-CN,zh;q=0.9',
+//		'cache-control:no-cache',
+//		'pragma:no-cache',
+//		'upgrade-insecure-requests:1',
+//		"User-Agent: $user_agent_rand",
+
 		"User-Agent: $user_agent_rand",
 		"Accept-Language: en-us,en;q=0.5",
 		"Connection: keep-alive",
 		"Accept: */*",
 		"Referrer: $url",
+//		'cookie:ali_apache_id=10.181.239.59.1516676165281.222230.3; intl_locale=en_US; _mle_tmp0=eNrz4A12DQ729PeL9%2FV3cfUxiKnOTLFScnMziwyMMAsPNNINNQkPCnXyNA309TY19jB3Cw03jDLU9TcJCzEMcvbSNbLwD1TSSS6xMjQ1NDMzNzM0MzW1NNJJTEYTyK2wMqiNAgCFRR0U; xman_f=28fX+ZPdr26Ky9sbivI7KJe8j/3+a/4ICKMVsBBbjaEfixkItkRyESvxyE2uKdsE9GDwoRDOWQFXWTvUnICXgBpMvGHXrSzNvwOOU7c3jv0bcSM0r7rz+A==; xman_t=akde7AYG8uloAzju9orVlqPRlEQr3J4/o/82M+synbGsOauooLIHl2q1dfvz51wq; JSESSIONID=FF6YQX6WQ2-U4WRUBI5QMK53H7FUW1Z1-O4VT1RCJ-28OQ; Hm_lvt_c27e828ededac3928c725c1cd6475dbd=1516676169; aep_history=keywords%5E%0Akeywords%09%0A%0Aproduct_selloffer%5E%0Aproduct_selloffer%0932524990479; cna=Rwu+Enuiq2MCAQHG3eXiiT1N; __lnkrntdmcvrd=aliexpress.com; __lnkrntafu=-1; _ga=GA1.2.1073968253.1516676180; _gid=GA1.2.1531436314.1516676180; __lfcc=1; aeu_cid=33c5a6e9bc944871a84d0d757b82c6b6-1516676193946-03869-rBUjEynII; xman_us_f=x_l=1&x_locale=en_US&x_as_i=%7B%22cv%22%3A%222%22%2C%22tp1%22%3A%22lc%22%2C%22src%22%3A%22promotion%22%2C%22af%22%3A761872645%2C%22cpt%22%3A1516676193946%2C%22channel%22%3A%22AFFILIATE%22%2C%22affiliateKey%22%3A%22rBUjEynII%22%2C%22cn%22%3A%22102480007%22%2C%22tagtime%22%3A1516676193953%2C%22vd%22%3A%2230%22%7D; Hm_lpvt_c27e828ededac3928c725c1cd6475dbd=1516676198; aep_usuc_f=site=glo&region=US&b_locale=en_US&c_tp=USD; intl_common_forever=I5VlMalEluKfHKOy7JjdeUSj71zTRlj0zEq+XXViauGRdnHJuF4WrQ==; ali_apache_track=; ali_apache_tracktmp=; acs_usuc_t=acs_rt=f818d4d905424965bb926f5bff2e5e7d&x_csrf=14v56ej5j4g3m; isg=BPz8Cwv6iul2-r41DAjw3nUuzZpuXbTHHqjDJNZ9COfKoZwr_gVwr3IbhcvZ6dh3',
 	));
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 	curl_setopt($ch, CURLOPT_HEADER, FALSE);
