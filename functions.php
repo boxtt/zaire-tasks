@@ -973,11 +973,63 @@ function deldir($dir)
 // 现在的问题是，总是998错误，好像是cookie过期
 function translate($keyword, $to = 'en', $from = 'zh')
 {
-	return $keyword;
+//	return $keyword;
 	$user_agent = get_user_agent();
 	$cookie_url = 'http://fanyi.baidu.com/';
 	list($cookie, $token, $gtk) = get_cookie_and_token_and_gtk($cookie_url, $user_agent);
 	$sign = get_tk_or_sign($keyword, $gtk);
+
+	$time   = time();
+	$lang   = '[{"value":"zh","text":"中文"},{"value":"en","text":"英语"}]';
+	$cookie .= ';from_lang_often='.urlencode($lang);
+	$cookie .= ';to_lang_often='.urlencode($lang);
+	$cookie .= ';FANYI_WORD_SWITCH=1';
+	$cookie .= ';HISTORY_SWITCH=1';
+	$cookie .= ';REALTIME_TRANS_SWITCH=1';
+	$cookie .= ';SOUND_PREFER_SWITCH=1';
+	$cookie .= ';SOUND_SPD_SWITCH=1';
+	$cookie .= 'Hm_lvt_64ecd82404c51e03dc91cb9e8c025574;='.($time - 100);
+	$cookie .= 'Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574;='.($time - 102);
+	$cookie .= 'Hm_lvt_c27e828ededac3928c725c1cd6475dbd;='.($time - 101);
+	$cookie .= 'Hm_lpvt_c27e828ededac3928c725c1cd6475dbd;='.($time - 101);
+
+//	$langdetect_url = 'http://fanyi.baidu.com/langdetect';
+//	$lch            = curl_init($langdetect_url);
+//	$data           = ['query' => $keyword];
+//	$data           = http_build_query($data);
+//	$length         = strlen($data);
+//	curl_setopt($lch, CURLOPT_HTTPHEADER, [
+//		'Accept:*/*',
+//		'Accept-Encoding:gzip, deflate',
+//		'Accept-Language:zh-CN,zh;q=0.9',
+//		'Cache-Control:no-cache',
+//		'Connection:keep-alive',
+//		'Content-Length:'.$length,
+//		'Content-Type:application/x-www-form-urlencoded',
+//		'Cookie:'.$cookie,
+//		'Host:fanyi.baidu.com',
+//		'Origin:http://fanyi.baidu.com',
+//		'Pragma:no-cache',
+//		'Referer:http://fanyi.baidu.com/',
+//		'User-Agent:'.$user_agent,
+//		'X-Requested-With:XMLHttpRequest',
+//	]);
+//	curl_setopt($lch, CURLOPT_ENCODING, 'gzip');
+//	curl_setopt($lch, CURLOPT_SSL_VERIFYHOST, 2);
+//	curl_setopt($lch, CURLOPT_SSL_VERIFYPEER, FALSE); // 跳过证书检查
+//	// 设置post方法
+//	curl_setopt($lch, CURLOPT_POST, TRUE);
+//	// 设置post数据
+//	curl_setopt($lch, CURLOPT_POSTFIELDS, $data);
+//	// 获取响应头
+//	curl_setopt($lch, CURLOPT_HEADER, TRUE);
+//
+//	curl_setopt($lch, CURLOPT_REFERER, $langdetect_url);
+//	curl_setopt($lch, CURLOPT_RETURNTRANSFER, TRUE);
+//	curl_setopt($lch, CURLOPT_TIMEOUT, 5); // 设置超时限制防止死循环
+//	$re = curl_exec($lch);
+//	curl_close($lch);
+//	dump($re);
 
 	$url  = 'http://fanyi.baidu.com/v2transapi';
 	$data = array(
@@ -991,6 +1043,8 @@ function translate($keyword, $to = 'en', $from = 'zh')
 	);
 	$data = http_build_query($data);
 
+	$length = strlen($data);
+
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [
 		'Accept:*/*',
@@ -998,7 +1052,7 @@ function translate($keyword, $to = 'en', $from = 'zh')
 		'Accept-Language:zh-CN,zh;q=0.9',
 		'Cache-Control:no-cache',
 		'Connection:keep-alive',
-		//		'Content-Length:116',
+		'Content-Length:'.$length,
 		'Content-Type:application/x-www-form-urlencoded; charset=UTF-8',
 		'Cookie:'.$cookie,
 		'Host:fanyi.baidu.com',
@@ -1016,7 +1070,7 @@ function translate($keyword, $to = 'en', $from = 'zh')
 	// 设置post数据
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 	// 获取响应头
-//	curl_setopt($ch, CURLOPT_HEADER, TRUE);
+	curl_setopt($ch, CURLOPT_HEADER, TRUE);
 
 	curl_setopt($ch, CURLOPT_REFERER, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
@@ -1024,6 +1078,25 @@ function translate($keyword, $to = 'en', $from = 'zh')
 
 	// 返回的error错误代码
 	//997, 没有cookie；998，cookie过期；999，内部错误
+
+//	    res
+//      Content - Encoding:gzip
+//      Content - Length:74
+//      Content - Type:application / json
+//      Date:Mon, 29 Jan 2018 09:29:41 GMT
+//      Server:Apache
+//      Vary:Accept - Encoding
+//
+//      Access - Control - Allow - Credentials: TRUE
+//      Access - Control - Allow - Origin: http://fanyi.baidu.com
+//      Content - Encoding: gzip
+//      Content - Type: application / json
+//      Date: Mon, 29 Jan 2018 09:40:48 GMT
+//      Server: Apache
+//      Vary: Accept - Encoding
+//      Content - Length: 74
+//      Connection: close
+//      Proxy - Connection: keep - alive
 
 	$re = curl_exec($ch);
 
@@ -1058,7 +1131,6 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 		'Cache-Control:no-cache',
 		'Connection:keep-alive',
 		'Host:fanyi.baidu.com',
-		'Pragma:no-cache',
 		'Upgrade-Insecure-Requests:1',
 		'User-Agent:'.$user_agent,
 	]);
@@ -1121,9 +1193,23 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 			}
 		}
 	}
-	$cookie_tmp = $headers['Set-Cookie'];
+	$cookie_tmp     = $headers['Set-Cookie'];
+	$cookie_tmp_arr = explode(';', $cookie_tmp);
+	$cookies        = [];
+	foreach ($cookie_tmp_arr as $cook)
+	{
+		list($k, $v) = explode('=', $cook, 2);
+		$k = trim($k);
+		$v = trim($v);
+		in_array($k, ['expires', 'path', 'domain', 'version']) || $cookies[$k] = $v;
+	}
+	$cookie_str = '';
+	foreach ($cookies as $k => $v)
+	{
+		$cookie_str .= (empty($cookie_str) ? '' : ';').$k.'='.$v;
+	}
 
-	return [$cookie_tmp, $token, $gtk];
+	return [$cookie_str, $token, $gtk];
 }
 
 function get_token_and_gtk()
@@ -1280,11 +1366,11 @@ function getSslPage($url)
 //		'upgrade-insecure-requests:1',
 //		"User-Agent: $user_agent_rand",
 
-		"User-Agent: $user_agent_rand",
-		"Accept-Language: en-us,en;q=0.5",
-		"Connection: keep-alive",
-		"Accept: */*",
-		"Referrer: $url",
+"User-Agent: $user_agent_rand",
+"Accept-Language: en-us,en;q=0.5",
+"Connection: keep-alive",
+"Accept: */*",
+"Referrer: $url",
 //		'cookie:ali_apache_id=10.181.239.59.1516676165281.222230.3; intl_locale=en_US; _mle_tmp0=eNrz4A12DQ729PeL9%2FV3cfUxiKnOTLFScnMziwyMMAsPNNINNQkPCnXyNA309TY19jB3Cw03jDLU9TcJCzEMcvbSNbLwD1TSSS6xMjQ1NDMzNzM0MzW1NNJJTEYTyK2wMqiNAgCFRR0U; xman_f=28fX+ZPdr26Ky9sbivI7KJe8j/3+a/4ICKMVsBBbjaEfixkItkRyESvxyE2uKdsE9GDwoRDOWQFXWTvUnICXgBpMvGHXrSzNvwOOU7c3jv0bcSM0r7rz+A==; xman_t=akde7AYG8uloAzju9orVlqPRlEQr3J4/o/82M+synbGsOauooLIHl2q1dfvz51wq; JSESSIONID=FF6YQX6WQ2-U4WRUBI5QMK53H7FUW1Z1-O4VT1RCJ-28OQ; Hm_lvt_c27e828ededac3928c725c1cd6475dbd=1516676169; aep_history=keywords%5E%0Akeywords%09%0A%0Aproduct_selloffer%5E%0Aproduct_selloffer%0932524990479; cna=Rwu+Enuiq2MCAQHG3eXiiT1N; __lnkrntdmcvrd=aliexpress.com; __lnkrntafu=-1; _ga=GA1.2.1073968253.1516676180; _gid=GA1.2.1531436314.1516676180; __lfcc=1; aeu_cid=33c5a6e9bc944871a84d0d757b82c6b6-1516676193946-03869-rBUjEynII; xman_us_f=x_l=1&x_locale=en_US&x_as_i=%7B%22cv%22%3A%222%22%2C%22tp1%22%3A%22lc%22%2C%22src%22%3A%22promotion%22%2C%22af%22%3A761872645%2C%22cpt%22%3A1516676193946%2C%22channel%22%3A%22AFFILIATE%22%2C%22affiliateKey%22%3A%22rBUjEynII%22%2C%22cn%22%3A%22102480007%22%2C%22tagtime%22%3A1516676193953%2C%22vd%22%3A%2230%22%7D; Hm_lpvt_c27e828ededac3928c725c1cd6475dbd=1516676198; aep_usuc_f=site=glo&region=US&b_locale=en_US&c_tp=USD; intl_common_forever=I5VlMalEluKfHKOy7JjdeUSj71zTRlj0zEq+XXViauGRdnHJuF4WrQ==; ali_apache_track=; ali_apache_tracktmp=; acs_usuc_t=acs_rt=f818d4d905424965bb926f5bff2e5e7d&x_csrf=14v56ej5j4g3m; isg=BPz8Cwv6iul2-r41DAjw3nUuzZpuXbTHHqjDJNZ9COfKoZwr_gVwr3IbhcvZ6dh3',
 	));
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
