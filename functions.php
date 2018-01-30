@@ -459,6 +459,45 @@ function output($string)
 	}
 }
 
+/**
+ * utf8字符转换成Unicode字符，单个字符
+ *
+ * @param  string $utf8_str Utf-8字符
+ * @param  bool $opper 是否转化大写
+ * @param  string $pre 前缀默认是%u
+ *
+ * @return string Unicode字符,前边没有%u的
+ */
+function utf8_str_to_unicode($utf8_str,$opper = TRUE, $pre= '%u')
+{
+	$unicode = 0;
+	$unicode = (ord($utf8_str[0]) & 0x1F) << 12;
+	$unicode |= (ord($utf8_str[1]) & 0x3F) << 6;
+	$unicode |= (ord($utf8_str[2]) & 0x3F);
+
+	return '%u'.strtoupper(dechex($unicode));
+}
+
+/**
+ * Unicode字符转换成utf8字符
+ *
+ * @param  string $unicode_str Unicode字符 前边没有%u的
+ *
+ * @return string              Utf-8字符
+ */
+function unicode_to_utf8($unicode_str)
+{
+	$utf8_str = '';
+	$code     = intval(hexdec($unicode_str));
+	//这里注意转换出来的code一定得是整形，这样才会正确的按位操作
+	$ord_1    = decbin(0xe0 | ($code >> 12));
+	$ord_2    = decbin(0x80 | (($code >> 6) & 0x3f));
+	$ord_3    = decbin(0x80 | ($code & 0x3f));
+	$utf8_str = chr(bindec($ord_1)).chr(bindec($ord_2)).chr(bindec($ord_3));
+
+	return $utf8_str;
+}
+
 function init_file($surl)
 {
 	$file = __DIR__.'/'.$surl.'.txt';
@@ -980,18 +1019,22 @@ function translate($keyword, $to = 'en', $from = 'zh')
 	$sign = get_tk_or_sign($keyword, $gtk);
 
 	$time   = time();
-	$lang   = '[{"value":"zh","text":"中文"},{"value":"en","text":"英语"}]';
-	$cookie .= ';from_lang_often='.urlencode($lang);
-	$cookie .= ';to_lang_often='.urlencode($lang);
+	$lang   = '[{"value":"zh","text":"'.urlencode('中文').'"},{"value":"en","text":"'.urlencode('英语').'"}]';
+	$to_lang_often = urlencode('[{"value":"zh","text":"').utf8_str_to_unicode('中').utf8_str_to_unicode('文').urlencode('"},{"value":"en","text":"')
+		.utf8_str_to_unicode('英').utf8_str_to_unicode('语').urlencode('"}]');
+	$from_lang_often = urlencode('[{"value":"zh","text":"').utf8_str_to_unicode('英').utf8_str_to_unicode('语').urlencode('"},{"value":"en","text":"')
+		.utf8_str_to_unicode('中').utf8_str_to_unicode('文').urlencode('"}]');
+	$cookie .= ';from_lang_often='.$from_lang_often;
+	$cookie .= ';to_lang_often='.$to_lang_often;
 	$cookie .= ';FANYI_WORD_SWITCH=1';
 	$cookie .= ';HISTORY_SWITCH=1';
 	$cookie .= ';REALTIME_TRANS_SWITCH=1';
 	$cookie .= ';SOUND_PREFER_SWITCH=1';
 	$cookie .= ';SOUND_SPD_SWITCH=1';
-	$cookie .= 'Hm_lvt_64ecd82404c51e03dc91cb9e8c025574;='.($time - 100);
-	$cookie .= 'Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574;='.($time - 102);
-	$cookie .= 'Hm_lvt_c27e828ededac3928c725c1cd6475dbd;='.($time - 101);
-	$cookie .= 'Hm_lpvt_c27e828ededac3928c725c1cd6475dbd;='.($time - 101);
+//	$cookie .= ';Hm_lvt_64ecd82404c51e03dc91cb9e8c025574='.($time - 100);
+//	$cookie .= ';Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574='.($time - 102);
+//	$cookie .= ';Hm_lvt_c27e828ededac3928c725c1cd6475dbd='.($time - 101);
+//	$cookie .= ';Hm_lpvt_c27e828ededac3928c725c1cd6475dbd='.($time - 101);
 
 //	$langdetect_url = 'http://fanyi.baidu.com/langdetect';
 //	$lch            = curl_init($langdetect_url);
@@ -1031,7 +1074,7 @@ function translate($keyword, $to = 'en', $from = 'zh')
 //	curl_close($lch);
 //	dump($re);
 
-	$url  = 'http://fanyi.baidu.com/v2transapi';
+	$url  = 'https://fanyi.baidu.com/v2transapi';
 	$data = array(
 		'from'              => $from,
 		'to'                => $to,
@@ -1048,7 +1091,7 @@ function translate($keyword, $to = 'en', $from = 'zh')
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [
 		'Accept:*/*',
-		'Accept-Encoding:gzip, deflate',
+		'Accept-Encoding:gzip, deflate, br',
 		'Accept-Language:zh-CN,zh;q=0.9',
 		'Cache-Control:no-cache',
 		'Connection:keep-alive',
@@ -1056,9 +1099,9 @@ function translate($keyword, $to = 'en', $from = 'zh')
 		'Content-Type:application/x-www-form-urlencoded; charset=UTF-8',
 		'Cookie:'.$cookie,
 		'Host:fanyi.baidu.com',
-		'Origin:http://fanyi.baidu.com',
+		'Origin:https://fanyi.baidu.com',
 		'Pragma:no-cache',
-		'Referer:http://fanyi.baidu.com/',
+		'Referer:https://fanyi.baidu.com/',
 		'User-Agent:'.$user_agent,
 		'X-Requested-With:XMLHttpRequest',
 	]);
@@ -1072,34 +1115,19 @@ function translate($keyword, $to = 'en', $from = 'zh')
 	// 获取响应头
 	curl_setopt($ch, CURLOPT_HEADER, TRUE);
 
-	curl_setopt($ch, CURLOPT_REFERER, $url);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+//	curl_setopt($ch, CURLOPT_REFERER, $url);
+//	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 设置超时限制防止死循环
 
 	// 返回的error错误代码
 	//997, 没有cookie；998，cookie过期；999，内部错误
 
 //	    res
-//      Content - Encoding:gzip
-//      Content - Length:74
-//      Content - Type:application / json
-//      Date:Mon, 29 Jan 2018 09:29:41 GMT
-//      Server:Apache
-//      Vary:Accept - Encoding
-//
-//      Access - Control - Allow - Credentials: TRUE
-//      Access - Control - Allow - Origin: http://fanyi.baidu.com
-//      Content - Encoding: gzip
-//      Content - Type: application / json
-//      Date: Mon, 29 Jan 2018 09:40:48 GMT
-//      Server: Apache
-//      Vary: Accept - Encoding
-//      Content - Length: 74
-//      Connection: close
-//      Proxy - Connection: keep - alive
+//	    Transfer - Encoding:chunked，响应头部应该有这个字段，
+// 	    curl请求的响应头里面有Proxy-Connection字段
 
 	$re = curl_exec($ch);
-
+dump($re);die('ok');
 	return $re;
 	$re = json_decode($re, TRUE);
 //	$re   = $re['trans_result']['data'][0]['dst'];
@@ -1201,7 +1229,7 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 		list($k, $v) = explode('=', $cook, 2);
 		$k = trim($k);
 		$v = trim($v);
-		in_array($k, ['expires', 'path', 'domain', 'version']) || $cookies[$k] = $v;
+		in_array($k, ['expires', 'path', 'domain', 'version', 'max-age']) || $cookies[$k] = $v;
 	}
 	$cookie_str = '';
 	foreach ($cookies as $k => $v)
@@ -1662,4 +1690,5 @@ function postman_souq($c)
 
 
 // 抓取数据 --end
+
 
