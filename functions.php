@@ -463,12 +463,12 @@ function output($string)
  * utf8字符转换成Unicode字符，单个字符
  *
  * @param  string $utf8_str Utf-8字符
- * @param  bool $opper 是否转化大写
- * @param  string $pre 前缀默认是%u
+ * @param  bool   $opper    是否转化大写
+ * @param  string $pre      前缀默认是%u
  *
  * @return string Unicode字符,前边没有%u的
  */
-function utf8_str_to_unicode($utf8_str,$opper = TRUE, $pre= '%u')
+function utf8_str_to_unicode($utf8_str, $opper = TRUE, $pre = '%u')
 {
 	$unicode = 0;
 	$unicode = (ord($utf8_str[0]) & 0x1F) << 12;
@@ -1014,11 +1014,16 @@ function translate($keyword, $to = 'en', $from = 'zh')
 {
 //	return $keyword;
 	$user_agent = get_user_agent();
-	$cookie_url = 'http://fanyi.baidu.com/';
+//	$user_agent = 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36';
+	$cookie_url = 'https://fanyi.baidu.com/';
 	list($cookie, $token, $gtk) = get_cookie_and_token_and_gtk($cookie_url, $user_agent);
 	$sign = get_tk_or_sign($keyword, $gtk);
-
-	$time   = time();
+	output('token:'.$token);
+	output('gtk:'.$gtk);
+	output('sign:'.$sign);
+	output('cookie:'.$cookie);
+//	$token = '113f5c20ed0717aa4b283282fdf75cbf';
+//	$time  = time();
 	/**
 	 * {
 	 * "zh": "中文",
@@ -1111,22 +1116,24 @@ function translate($keyword, $to = 'en', $from = 'zh')
 	 * "cht": "中文繁体"
 	 * }
 	 */
-	$lang   = '[{"value":"zh","text":"'.urlencode('中文').'"},{"value":"en","text":"'.urlencode('英语').'"}]';
-	$to_lang_often = urlencode('[{"value":"zh","text":"').utf8_str_to_unicode('中').utf8_str_to_unicode('文').urlencode('"},{"value":"en","text":"')
-		.utf8_str_to_unicode('英').utf8_str_to_unicode('语').urlencode('"}]');
-	$from_lang_often = urlencode('[{"value":"zh","text":"').utf8_str_to_unicode('英').utf8_str_to_unicode('语').urlencode('"},{"value":"en","text":"')
-		.utf8_str_to_unicode('中').utf8_str_to_unicode('文').urlencode('"}]');
-	$cookie .= ';from_lang_often='.$from_lang_often;
-	$cookie .= ';to_lang_often='.$to_lang_often;
-	$cookie .= ';FANYI_WORD_SWITCH=1';
-	$cookie .= ';HISTORY_SWITCH=1';
-	$cookie .= ';REALTIME_TRANS_SWITCH=1';
-	$cookie .= ';SOUND_PREFER_SWITCH=1';
-	$cookie .= ';SOUND_SPD_SWITCH=1';
-//	$cookie .= ';Hm_lvt_64ecd82404c51e03dc91cb9e8c025574='.($time - 100);
-//	$cookie .= ';Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574='.($time - 102);
-//	$cookie .= ';Hm_lvt_c27e828ededac3928c725c1cd6475dbd='.($time - 101);
-//	$cookie .= ';Hm_lpvt_c27e828ededac3928c725c1cd6475dbd='.($time - 101);
+//	$lang            = '[{"value":"zh","text":"'.urlencode('中文').'"},{"value":"en","text":"'.urlencode('英语').'"}]';
+//	$to_lang_often   = urlencode('[{"value":"zh","text":"').utf8_str_to_unicode('中').utf8_str_to_unicode('文')
+//		.urlencode('"},{"value":"en","text":"')
+//		.utf8_str_to_unicode('英').utf8_str_to_unicode('语').urlencode('"}]');
+//	$from_lang_often = urlencode('[{"value":"zh","text":"').utf8_str_to_unicode('英').utf8_str_to_unicode('语')
+//		.urlencode('"},{"value":"en","text":"')
+//		.utf8_str_to_unicode('中').utf8_str_to_unicode('文').urlencode('"}]');
+//	$cookie          .= ';from_lang_often='.$from_lang_often;
+//	$cookie          .= ';to_lang_often='.$to_lang_often;
+//	$cookie          .= ';FANYI_WORD_SWITCH=1';
+//	$cookie          .= ';HISTORY_SWITCH=1';
+//	$cookie          .= ';REALTIME_TRANS_SWITCH=1';
+//	$cookie          .= ';SOUND_PREFER_SWITCH=1';
+//	$cookie          .= ';SOUND_SPD_SWITCH=1';
+//	$cookie          .= ';Hm_lvt_64ecd82404c51e03dc91cb9e8c025574='.($time - 100);
+//	$cookie          .= ';Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574='.($time - 102);
+//	$cookie          .= ';Hm_lvt_c27e828ededac3928c725c1cd6475dbd='.($time - 101);
+//	$cookie          .= ';Hm_lpvt_c27e828ededac3928c725c1cd6475dbd='.($time - 101);
 
 //	$langdetect_url = 'http://fanyi.baidu.com/langdetect';
 //	$lch            = curl_init($langdetect_url);
@@ -1219,7 +1226,9 @@ function translate($keyword, $to = 'en', $from = 'zh')
 // 	    curl请求的响应头里面有Proxy-Connection字段
 
 	$re = curl_exec($ch);
-dump($re);die('ok');
+	dump($re);
+	die('ok');
+
 	return $re;
 	$re = json_decode($re, TRUE);
 //	$re   = $re['trans_result']['data'][0]['dst'];
@@ -1254,8 +1263,8 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 		'Upgrade-Insecure-Requests:1',
 		'User-Agent:'.$user_agent,
 	]);
-//	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-//	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // 跳过证书检查
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // 跳过证书检查
 	// 只获取响应头就行了
 	curl_setopt($ch, CURLOPT_HEADER, TRUE);
 //	curl_setopt($ch, CURLOPT_NOBODY, TRUE);
@@ -1271,7 +1280,7 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 
 	curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
 
-	curl_setopt($ch, CURLOPT_REFERER, $url);
+//	curl_setopt($ch, CURLOPT_REFERER, $url);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 5); // 设置超时限制防止死循环
 	$result = curl_exec($ch);
@@ -1280,10 +1289,16 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 	$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 	curl_close($ch);
 	// 根据头大小去获取头信息内容
-	$header = substr($result, 0, $headerSize);
+	$header = trim(substr($result, 0, $headerSize));
 
-	$result = substr($result, $headerSize + 1);
-	$gtk    = 0;
+	$result = trim(substr($result, $headerSize));
+
+	// --start debug---
+	file_put_contents('./baidu.html', $result);
+//	dump($result);die;
+	// --end debug---
+
+	$gtk = 0;
 	if (preg_match("/window\.gtk\s?=\s?\'([\d\.]*)\'/", $result, $arr))
 	{
 		$gtk = $arr[1];
@@ -1313,23 +1328,30 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 			}
 		}
 	}
+
+	if(!isset($headers['Set-Cookie']))
+	{
+		die('没有接收到cookie');
+	}
 	$cookie_tmp     = $headers['Set-Cookie'];
 	$cookie_tmp_arr = explode(';', $cookie_tmp);
 	$cookies        = [];
 	foreach ($cookie_tmp_arr as $cook)
 	{
 		list($k, $v) = explode('=', $cook, 2);
-		$k = trim($k);
-		$v = trim($v);
-		in_array($k, ['expires', 'path', 'domain', 'version', 'max-age']) || $cookies[$k] = $v;
+		$k           = trim($k);
+		$v           = trim($v);
+		$cookies[$k] = $v;
+//		in_array($k, ['expires', 'path', 'domain', 'version', 'max-age']) || $cookies[$k] = $v;
 	}
+
 	$cookie_str = '';
 	foreach ($cookies as $k => $v)
 	{
 		$cookie_str .= (empty($cookie_str) ? '' : ';').$k.'='.$v;
 	}
 
-	return [$cookie_str, $token, $gtk];
+	return [$cookie_tmp, $token, $gtk];
 }
 
 function get_token_and_gtk()

@@ -2,8 +2,7 @@
 
 require './functions.php';
 
-
-$k = '你好';
+$k = '测试';
 $r = translate($k);
 dump($r);
 
