@@ -1023,7 +1023,6 @@ function translate($keyword, $to = 'en', $from = 'zh')
 	output('sign:'.$sign);
 	output('cookie:'.$cookie);
 //	$token = '113f5c20ed0717aa4b283282fdf75cbf';
-//	$time  = time();
 	/**
 	 * {
 	 * "zh": "中文",
@@ -1116,24 +1115,6 @@ function translate($keyword, $to = 'en', $from = 'zh')
 	 * "cht": "中文繁体"
 	 * }
 	 */
-//	$lang            = '[{"value":"zh","text":"'.urlencode('中文').'"},{"value":"en","text":"'.urlencode('英语').'"}]';
-//	$to_lang_often   = urlencode('[{"value":"zh","text":"').utf8_str_to_unicode('中').utf8_str_to_unicode('文')
-//		.urlencode('"},{"value":"en","text":"')
-//		.utf8_str_to_unicode('英').utf8_str_to_unicode('语').urlencode('"}]');
-//	$from_lang_often = urlencode('[{"value":"zh","text":"').utf8_str_to_unicode('英').utf8_str_to_unicode('语')
-//		.urlencode('"},{"value":"en","text":"')
-//		.utf8_str_to_unicode('中').utf8_str_to_unicode('文').urlencode('"}]');
-//	$cookie          .= ';from_lang_often='.$from_lang_often;
-//	$cookie          .= ';to_lang_often='.$to_lang_often;
-//	$cookie          .= ';FANYI_WORD_SWITCH=1';
-//	$cookie          .= ';HISTORY_SWITCH=1';
-//	$cookie          .= ';REALTIME_TRANS_SWITCH=1';
-//	$cookie          .= ';SOUND_PREFER_SWITCH=1';
-//	$cookie          .= ';SOUND_SPD_SWITCH=1';
-//	$cookie          .= ';Hm_lvt_64ecd82404c51e03dc91cb9e8c025574='.($time - 100);
-//	$cookie          .= ';Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574='.($time - 102);
-//	$cookie          .= ';Hm_lvt_c27e828ededac3928c725c1cd6475dbd='.($time - 101);
-//	$cookie          .= ';Hm_lpvt_c27e828ededac3928c725c1cd6475dbd='.($time - 101);
 
 //	$langdetect_url = 'http://fanyi.baidu.com/langdetect';
 //	$lch            = curl_init($langdetect_url);
@@ -1178,8 +1159,8 @@ function translate($keyword, $to = 'en', $from = 'zh')
 		'from'              => $from,
 		'to'                => $to,
 		'query'             => $keyword,
-		'transtype'         => 'realtime',
-		'simple_means_flag' => '3',
+		'transtype'         => 'translang',
+		'simple_means_flag' => 'realtime',
 		'sign'              => $sign,
 		'token'             => $token,
 	);
@@ -1189,21 +1170,22 @@ function translate($keyword, $to = 'en', $from = 'zh')
 
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [
-		'Accept:*/*',
+		'Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
 		'Accept-Encoding:gzip, deflate, br',
 		'Accept-Language:zh-CN,zh;q=0.9',
 		'Cache-Control:no-cache',
 		'Connection:keep-alive',
-		'Content-Length:'.$length,
-		'Content-Type:application/x-www-form-urlencoded; charset=UTF-8',
+//		'Content-Length:'.$length,
+//		'Content-Type:application/x-www-form-urlencoded; charset=UTF-8',
 		'Cookie:'.$cookie,
 		'Host:fanyi.baidu.com',
-		'Origin:https://fanyi.baidu.com',
+//		'Origin:https://fanyi.baidu.com',
 		'Pragma:no-cache',
 		'Referer:https://fanyi.baidu.com/',
 		'User-Agent:'.$user_agent,
 		'X-Requested-With:XMLHttpRequest',
 	]);
+//	curl_setopt($ch, CURLOPT_COOKIE, $cookie);
 	curl_setopt($ch, CURLOPT_ENCODING, 'gzip');
 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); // 跳过证书检查
@@ -1251,7 +1233,6 @@ function translate($keyword, $to = 'en', $from = 'zh')
 
 function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NULL)
 {
-	// 根据地址获取百度网盘的真正地址
 	$ch = curl_init($url);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, [
 		'Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -1295,6 +1276,7 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 
 	// --start debug---
 	file_put_contents('./baidu.html', $result);
+	file_put_contents('./header.html', $header);
 //	dump($result);die;
 	// --end debug---
 
@@ -1329,7 +1311,7 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 		}
 	}
 
-	if(!isset($headers['Set-Cookie']))
+	if ( ! isset($headers['Set-Cookie']))
 	{
 		die('没有接收到cookie');
 	}
@@ -1339,11 +1321,40 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 	foreach ($cookie_tmp_arr as $cook)
 	{
 		list($k, $v) = explode('=', $cook, 2);
-		$k           = trim($k);
-		$v           = trim($v);
-		$cookies[$k] = $v;
-//		in_array($k, ['expires', 'path', 'domain', 'version', 'max-age']) || $cookies[$k] = $v;
+		$k = trim($k);
+		$v = trim($v);
+		if (in_array($k, ['locale', 'BAIDUID']))
+		{
+			$cookies[$k] = $v;
+		}
 	}
+//	$baiduid  = $cookies['BAIDUID'];
+//	$cookies['BIDUPSID'] = substr($baiduid, 0, strpos($baiduid, ':'));
+//		$time            = time();
+//	$lang = '[{"value":"zh","text":"'.urlencode('中文').'"},{"value":"en","text":"'.urlencode('英语').'"}]';
+//	$to_lang_often = urlencode('[{"value":"zh","text":"').utf8_str_to_unicode('中').utf8_str_to_unicode('文')
+//		.urlencode('"},{"value":"en","text":"')
+//		.utf8_str_to_unicode('英').utf8_str_to_unicode('语').urlencode('"}]');
+//	$from_lang_often = urlencode('[{"value":"en","text":"').utf8_str_to_unicode('英').utf8_str_to_unicode('语')
+//		.urlencode('"},{"value":"zh","text":"')
+//		.utf8_str_to_unicode('中').utf8_str_to_unicode('文').urlencode('"}]');
+//	$cookies['from_lang_often'] = $from_lang_often;
+//	$cookies['to_lang_often'] = $to_lang_often;
+//	$cookies['FANYI_WORD_SWITCH'] = 1;
+//	$cookies['HISTORY_SWITCH'] = 1;
+//	$cookies['REALTIME_TRANS_SWITCH'] = 1;
+//	$cookies['SOUND_PREFER_SWITCH'] = 1;
+//	$cookies['RESOUND_PREFER_SWITCH'] = 1;
+//	$cookies['SOUND_SPD_SWITCH'] = 1;
+//	$cookies['PSTM'] = '1519289280';
+//	$cookies['pgv_pvi'] = '4332079104';
+//	$cookies['MCITY'] = '-%3A';
+//	$cookies['Hm_lvt_64ecd82404c51e03dc91cb9e8c025574'] = ($time - 100);
+//	$cookies['Hm_lpvt_64ecd82404c51e03dc91cb9e8c025574'] = ($time - 102);
+//	$cookies['Hm_lvt_c27e828ededac3928c725c1cd6475dbd'] = ($time - 101);
+//	$cookies['Hm_lpvt_c27e828ededac3928c725c1cd6475dbd'] = ($time - 103);
+//	output('cookie:'.$cookie);
+//	die;
 
 	$cookie_str = '';
 	foreach ($cookies as $k => $v)
@@ -1351,7 +1362,7 @@ function get_cookie_and_token_and_gtk($url, $user_agent, $ip = NULL, $port = NUL
 		$cookie_str .= (empty($cookie_str) ? '' : ';').$k.'='.$v;
 	}
 
-	return [$cookie_tmp, $token, $gtk];
+	return [$cookie_str, $token, $gtk];
 }
 
 function get_token_and_gtk()
@@ -1592,6 +1603,7 @@ function get_1688($url)
 // 速卖通网站上的商品
 function get_aliexpress($url)
 {
+	die('ok');
 	$data = array();
 	try
 	{
