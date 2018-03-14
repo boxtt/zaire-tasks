@@ -2,6 +2,38 @@
 
 // 设置时区为上海
 ini_set('date.timezone', 'Asia/Shanghai');
+if ( ! function_exists('array_column'))
+{
+	/**
+	 * 这个函数上就是因为php5.3没有这个函数，所以自己实现
+	 *
+	 * @param array    $array 数组
+	 * @param   string $key   指定要获取的二维数组的列
+	 * @param  string  $value 指定作为键的列
+	 *
+	 * @return array $return
+	 */
+	function array_column(array $array, $key, $value = NULL)
+	{
+		$return = array();
+		foreach ($array as $one)
+		{
+			if (array_key_exists($key, $one))
+			{
+				if ($value && array_key_exists($value, $one))
+				{
+					$return[$one[$value]] = $one[$key];
+				}
+				else
+				{
+					$return[] = $one[$key];
+				}
+			}
+		}
+
+		return $return;
+	}
+}
 
 function get_ip()
 {
@@ -515,9 +547,111 @@ function init_file($surl)
 	return $h;
 }
 
+function del0($num) //去掉数字段前面的0
+{
+	return "".intval($num);
+}
+
+function n2c($x) //单个数字变汉字
+{
+	$arr_n = array("零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十");
+
+	return $arr_n[$x];
+}
+
+function num_r($abcd) //读取数值（4位）
+{
+	$arr      = array();
+	$str      = ""; //读取后的汉字数值
+	$flag     = 0; //该位是否为零
+	$flag_end = 1; //是否以“零”结尾
+	$size_r   = strlen($abcd);
+	for ($i = 0; $i < $size_r; $i ++)
+	{
+		$arr[$i] = $abcd{$i};
+	}
+	$arrlen = count($arr);
+	for ($j = 0; $j < $arrlen; $j ++)
+	{
+		$ch = n2c($arr[$arrlen - 1 - $j]); //从后向前转汉字
+		echo $ch;
+		echo "";
+		if ($ch == "零" && $flag == 0)
+		{ //如果是第一个零
+			$flag = 1; //该位为零
+			$str  = $ch.$str; //加入汉字数值字符串
+			continue;
+		}
+		elseif ($ch == "零")
+		{ //如果不是第一个零了
+			continue;
+		}
+		$flag = 0; //该位不是零
+		switch ($j)
+		{
+			case 0:
+				$str      = $ch;
+				$flag_end = 0;
+				break; //第一位（末尾），没有以“零”结尾
+			case 1:
+				$str = $ch."十".$str;
+				break; //第二位
+			case 2:
+				$str = $ch."百".$str;
+				break; //第三位
+			case 3:
+				$str = $ch."千".$str;
+				break; //第四位
+		}
+	}
+	if ($flag_end == 1) //如果以“零”结尾
+	{
+		mb_internal_encoding("UTF-8");
+		$str = mb_substr($str, 0, mb_strlen($str) - 1); //把“零”去掉
+	}
+
+	return $str;
+}
+
+function num2ch($num) //整体读取转换
+{
+	$num_real = del0($num);//去掉前面的“0”
+	$numlen   = strlen($num_real);
+	echo "numlen=".$numlen."";
+	if ($numlen >= 9)//如果满九位，读取“亿”位
+	{
+		$y = substr($num_real, - 9, 1);
+//echo $y;
+		$wsbq = substr($num_real, - 8, 4);
+		$gsbq = substr($num_real, - 4);
+		$a    = num_r(del0($gsbq));
+		$b    = num_r(del0($wsbq))."万";
+		$c    = num_r(del0($y))."亿";
+	}
+	elseif ($numlen <= 8 && $numlen >= 5) //如果大于等于“万”
+	{
+		$wsbq = substr($num_real, 0, $numlen - 4);
+		$gsbq = substr($num_real, - 4);
+		$a    = num_r(del0($gsbq));
+		$b    = num_r(del0($wsbq))."万";
+		$c    = "";
+	}
+	elseif ($numlen <= 4) //如果小于等于“千”
+	{
+		$gsbq = substr($num_real, - $numlen);
+		$a    = num_r(del0($gsbq));
+		$b    = "";
+		$c    = "";
+	}
+	$ch_num = $c.$b.$a;
+
+	return $ch_num;
+}
+
 function ll($h, $data, $eol = TRUE)
 {
-	$data = json_encode($data);
+	$new_data = json_encode($data);
+	$data     = empty($new_data) ? $data : $new_data;
 	if ($eol)
 	{
 		$data .= PHP_EOL;
@@ -1175,11 +1309,11 @@ function translate($keyword, $to = 'en', $from = 'zh')
 		'Accept-Language:zh-CN,zh;q=0.9',
 		'Cache-Control:no-cache',
 		'Connection:keep-alive',
-//		'Content-Length:'.$length,
-//		'Content-Type:application/x-www-form-urlencoded; charset=UTF-8',
+		//		'Content-Length:'.$length,
+		//		'Content-Type:application/x-www-form-urlencoded; charset=UTF-8',
 		'Cookie:'.$cookie,
 		'Host:fanyi.baidu.com',
-//		'Origin:https://fanyi.baidu.com',
+		//		'Origin:https://fanyi.baidu.com',
 		'Pragma:no-cache',
 		'Referer:https://fanyi.baidu.com/',
 		'User-Agent:'.$user_agent,
