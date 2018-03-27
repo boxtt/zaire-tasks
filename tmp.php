@@ -3,7 +3,7 @@
 require './functions.php';
 
 $k = '测试';
-$r = translate($k);
+$r = google_translate($k);
 dump($r);
 
 die('ok');

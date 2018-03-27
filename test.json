@@ -1,0 +1,118 @@
+{
+  "reason": "查询成功",
+  "result": [
+    {
+      "proid": "50001",
+      "name": "Q币1元直充",
+      "saleprice": "0.985",
+      "perprice": "1",
+      "unit": "元",
+      "maxnums": "10"
+    },
+    {
+      "proid": "50002",
+      "name": "Q币5元直充",
+      "saleprice": "4.825",
+      "perprice": "5",
+      "unit": "元",
+      "maxnums": "10"
+    },
+    {
+      "proid": "50003",
+      "name": "Q币20元直充",
+      "saleprice": "19.300",
+      "perprice": "20",
+      "unit": "元",
+      "maxnums": "10"
+    },
+    {
+      "proid": "50004",
+      "name": "Q币30元直充",
+      "saleprice": "28.950",
+      "perprice": "30",
+      "unit": "元",
+      "maxnums": "10"
+    },
+    {
+      "proid": "50005",
+      "name": "Q币50元直充",
+      "saleprice": "48.250",
+      "perprice": "50",
+      "unit": "元",
+      "maxnums": "10"
+    },
+    {
+      "proid": "50006",
+      "name": "Q币100元直充",
+      "saleprice": "96.500",
+      "perprice": "100",
+      "unit": "元",
+      "maxnums": "10"
+    },
+    {
+      "proid": "50007",
+      "name": "QQ超级会员SVIP1个月",
+      "saleprice": "19.300",
+      "perprice": "20",
+      "unit": "月",
+      "maxnums": "12"
+    },
+    {
+      "proid": "50008",
+      "name": "QQ黄钻贵族1个月",
+      "saleprice": "9.650",
+      "perprice": "10",
+      "unit": "月",
+      "maxnums": "12"
+    },
+    {
+      "proid": "50009",
+      "name": "QQ黄钻豪华版1个月",
+      "saleprice": "14.475",
+      "perprice": "15",
+      "unit": "月",
+      "maxnums": "12"
+    },
+    {
+      "proid": "50010",
+      "name": "QQ蓝钻贵族1个月",
+      "saleprice": "9.650",
+      "perprice": "10",
+      "unit": "月",
+      "maxnums": "12"
+    },
+    {
+      "proid": "50011",
+      "name": "QQ绿钻贵族1个月",
+      "saleprice": "9.650",
+      "perprice": "10",
+      "unit": "月",
+      "maxnums": "12"
+    },
+    {
+      "proid": "50012",
+      "name": "QQ会员1个月",
+      "saleprice": "9.650",
+      "perprice": "10",
+      "unit": "月",
+      "maxnums": "12"
+    },
+    {
+      "proid": "50013",
+      "name": "CF会员1个月",
+      "saleprice": "29.550",
+      "perprice": "30",
+      "unit": "月",
+      "maxnums": "12"
+    },
+    {
+      "proid": "50014",
+      "name": "QQ蓝钻豪华版1个月",
+      "saleprice": "14.475",
+      "perprice": "15",
+      "unit": "月",
+      "maxnums": "12"
+    }
+  ],
+  "error_code": 0
+}

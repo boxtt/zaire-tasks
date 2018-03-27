@@ -35,6 +35,10 @@ if ( ! function_exists('array_column'))
 	}
 }
 
+/**
+ * 获取代理的ip和端口
+ * @return mixed
+ */
 function get_ip()
 {
 	// http代理和https代理是不一样的
@@ -80,6 +84,10 @@ function get_ip()
 	return $ip_port[array_rand($ip_port)];
 }
 
+//************************************************************************************************start
+// 为了破解百度云盘
+
+// 讲10进制改成 36进制，可以让26个英文字母也排列好，为了破解百度云盘的四位验证码
 function get_str($i)
 {
 	$n   = base_convert($i, 10, 36);
@@ -90,6 +98,7 @@ function get_str($i)
 	return $str;
 }
 
+// 访问fanyi.baidu.com获取cookie
 function get_cookie($url, $user_agent, $ip = NULL, $port = NULL)
 {
 	// 根据地址获取百度网盘的真正地址
@@ -152,6 +161,7 @@ function get_cookie($url, $user_agent, $ip = NULL, $port = NULL)
 	return $cookie_tmp;
 }
 
+// 获取盘百度网盘的结果
 function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h, $ip = NULL, $port = NULL)
 {
 	/*if ($headers['Set-Cookie'])
@@ -305,6 +315,7 @@ function get_pan($url, $cookie_tmp, $user_agent, $pwd = '', $vcode_str = '', $h,
 		 */
 }
 
+// 如果需要验证的话，获取验证码，但是我发现验证码可以随便填
 function get_code($cookie, $ip, $port)
 {
 	$curl = curl_init();
@@ -358,6 +369,9 @@ function get_code($cookie, $ip, $port)
 	return FALSE;
 }
 
+//************************************************************************************************end
+
+// 专区西刺代理的免费代理ip
 function xici_curl($url)
 {
 	$time = time();
@@ -397,9 +411,7 @@ function xici_curl($url)
 	return $result;
 }
 
-/*
-*返回字符串的毫秒数时间戳
-*/
+// 返回字符串的毫秒数时间戳
 function get_total_millisecond()
 {
 	$time  = explode(" ", microtime());
@@ -410,9 +422,7 @@ function get_total_millisecond()
 	return $time;
 }
 
-/*
- * 获取随机的user-agent
- */
+// 获取随机的user-agent
 function get_user_agent()
 {
 	$user_agent = require './user_agent.php';
@@ -468,6 +478,10 @@ function dump($var, $echo = TRUE, $label = NULL, $strict = TRUE)
 	}
 }
 
+/**
+ * 即时输出，在命令行模式下
+ * @param $string
+ */
 function output($string)
 {
 	if (is_array($string))
@@ -530,36 +544,140 @@ function unicode_to_utf8($unicode_str)
 	return $utf8_str;
 }
 
-function init_file($surl)
+//************************************************************************************************
+// 定时任务的解析
+
+// windows 下按照linux那样解析计划任务，不过需要windows每分钟或者每小时（根据实际情况）运行一次
+function tasks()
 {
-	$file = __DIR__.'/'.$surl.'.txt';
-	if ( ! is_file($file))
-	{
-		touch($file);
-	}
-	else
-	{
-		file_put_contents($file, '');
-	}
+	$_tasks = [
+		'test0' => '*/3 * * * *',
+		'test1' => '20 * * * *',
+	];
 
-	$h = fopen($file, 'w+');
+	$time = date('m-d-H-i-w');
+	$time = explode('-', $time);
+	$time = array_map('intval', $time);
+	list($m, $d, $h, $i, $w) = $time;
+	foreach ($_tasks as $task => $timer)
+	{
+		$ranges = [];
+		$timer  = preg_replace('/\s+/', ' ', $timer);
+		$timer  = explode(' ', $timer);
+		if (count($timer) != 5)
+		{
+			continue;
+		}
+		list($minute, $hour, $day, $month, $week) = $timer;
 
-	return $h;
+		// 暂时不支持用月份和星期的英文表示来代替
+		$types = [
+			'minute' => [0, 59], // minute (0 - 59)
+			'hour'   => [0, 23], // hour (0 - 23)
+			'day'    => [1, 31], // day of month (1 - 31)
+			'month'  => [1, 12], // month(1 - 12) OR jan, feb, mar, apr ...
+			'week'   => [0, 7], // day of week (0 - 6) (Sunday=0 or 7)  OR sun,mon,tue,wed,thu,fri,sat
+		];
+
+		foreach ($types as $type => $limit)
+		{
+			list($limit_min, $limit_max) = $limit;
+			$ranges_now = [];
+			$differ     = 1;
+			if (strpos($$type, '/') !== FALSE)
+			{
+				list($range, $differ) = explode('/', $$type);
+				if ($range == '*')
+				{
+					$range_min = $limit_min;
+					$range_max = $limit_max;
+				}
+				elseif (strpos($range, '-') !== FALSE)
+				{
+					list($range_min, $range_max) = explode('-', $range);
+				}
+			}
+			elseif ($$type == '*')
+			{
+				$range_min = $limit_min;
+				$range_max = $limit_max;
+			}
+			elseif (strpos($$type, '-'))
+			{
+				list($range_min, $range_max) = explode('-', $$type);
+			}
+			elseif (strpos($$type, ','))
+			{
+				$ranges_now = explode(',', $$type);
+			}
+			elseif (is_numeric($$type))
+			{
+				$ranges_now[] = intval($$type);
+			}
+
+			if (isset($range_min) && isset($range_max))
+			{
+				if ($range_min < $limit_min)
+				{
+					$range_min = $limit_min;
+				}
+				if ($range_max > $limit_max)
+				{
+					$range_max = $limit_max;
+				}
+
+				for ($j = intval($range_min); $j <= intval($range_max); $j += $differ)
+				{
+					$ranges_now[] = $j;
+				}
+			}
+			$ranges_now    = array_map('intval', $ranges_now);
+			$ranges[$type] = $ranges_now;
+		}
+
+		if (in_array($i, $ranges['minute']) && in_array($h, $ranges['hour']) && in_array($d, $ranges['day'])
+			&& in_array($m, $ranges['month'])
+			&& in_array($w, $ranges['week']))
+		{
+			if (method_exists($this, $task))
+			{
+				$this->$task();
+			}
+		}
+	}
 }
 
-function del0($num) //去掉数字段前面的0
+function test0()
+{
+	$h = init_file('tt');
+	ll($h, 'test0:'.date('Y-m-d H:i:s', time()));
+	close_file($h);
+}
+
+function test1()
+{
+	$h = init_file('tt');
+	ll($h, 'test1:'.date('Y-m-d H:i:s', time()));
+	close_file($h);
+}
+//************************************************************************************************
+
+//去掉数字段前面的0
+function del0($num)
 {
 	return "".intval($num);
 }
 
-function n2c($x) //单个数字变汉字
+//单个数字变汉字
+function n2c($x)
 {
 	$arr_n = array("零", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十");
 
 	return $arr_n[$x];
 }
 
-function num_r($abcd) //读取数值（4位）
+//读取数值（4位）
+function num_r($abcd)
 {
 	$arr      = array();
 	$str      = ""; //读取后的汉字数值
@@ -574,8 +692,8 @@ function num_r($abcd) //读取数值（4位）
 	for ($j = 0; $j < $arrlen; $j ++)
 	{
 		$ch = n2c($arr[$arrlen - 1 - $j]); //从后向前转汉字
-		echo $ch;
-		echo "";
+//		echo $ch;
+//		echo "";
 		if ($ch == "零" && $flag == 0)
 		{ //如果是第一个零
 			$flag = 1; //该位为零
@@ -617,7 +735,7 @@ function num2ch($num) //整体读取转换
 {
 	$num_real = del0($num);//去掉前面的“0”
 	$numlen   = strlen($num_real);
-	echo "numlen=".$numlen."";
+//	echo "numlen=".$numlen."";
 	if ($numlen >= 9)//如果满九位，读取“亿”位
 	{
 		$y = substr($num_real, - 9, 1);
@@ -646,6 +764,25 @@ function num2ch($num) //整体读取转换
 	$ch_num = $c.$b.$a;
 
 	return $ch_num;
+}
+
+//************************************************************************************************
+// 文件操作类的，记录日志用的
+function init_file($surl)
+{
+	$file = __DIR__.'/'.$surl.'.txt';
+	if ( ! is_file($file))
+	{
+		touch($file);
+	}
+	else
+	{
+		file_put_contents($file, '');
+	}
+
+	$h = fopen($file, 'w+');
+
+	return $h;
 }
 
 function ll($h, $data, $eol = TRUE)
@@ -685,6 +822,9 @@ function change_file($surl, $start, $end_old, $end_new)
 	}
 }
 
+//************************************************************************************************
+
+// 判断是否是命令行模式
 function is_cli()
 {
 	// 是否是cli 模式下的
@@ -694,7 +834,19 @@ function is_cli()
 	return $is_cli;
 }
 
+// 获取app端传递来的参数信息，json字典的数据处理
 function get_data()
+{
+	$data = file_get_contents(('php://input'));
+	// echo '<pre>';var_dump($data);
+	$data = json_decode($data, TRUE);
+
+	// var_dump($data);
+	return (array) $data;
+}
+
+// 获取命令号脚本的参数或者
+function get_param()
 {
 	$data = [];
 
@@ -727,6 +879,7 @@ function get_data()
 	return $data;
 }
 
+// 获取数组指定的键
 function get_arr(array $arr, $key, $default = NULL)
 {
 	if (isset($arr[$key]))
@@ -737,6 +890,7 @@ function get_arr(array $arr, $key, $default = NULL)
 	return $default;
 }
 
+// 输出二维数据
 function echo_arr($result)
 {
 	foreach ($result as $one)
@@ -748,7 +902,7 @@ function echo_arr($result)
 		echo is_cli() ? "\n" : '<br/>';
 	}
 }
-
+// 把字符变成竖直的，然后在横向切割
 function change_arr($result)
 {
 	$tmp_result = [];
@@ -763,6 +917,7 @@ function change_arr($result)
 	return $tmp_result;
 }
 
+// 去除顶部和底部的空白段
 function delete_arr_top_and_bottom($result, $full, $empty)
 {
 	$ii         = count($result);
@@ -817,6 +972,7 @@ function delete_arr_top_and_bottom($result, $full, $empty)
 	return $result;
 }
 
+// 填充空白
 function fill_black_in_empty_line($result, $full, $fill)
 {
 	$ii = count($result);
@@ -836,6 +992,7 @@ function fill_black_in_empty_line($result, $full, $fill)
 	return $result;
 }
 
+// 将数组转化成字符串
 function arr_to_str($arr)
 {
 	$str = '';
@@ -850,6 +1007,7 @@ function arr_to_str($arr)
 	return $str;
 }
 
+// 删除数组中的空行
 function delete_empty_line($result, $full, $empty)
 {
 	$hid = count($result);
@@ -884,6 +1042,7 @@ function delete_empty_line($result, $full, $empty)
 	return $new_result;
 }
 
+// 填充空行
 function fill_empty_line($result, $full, $fill)
 {
 	$hid = count($result);
@@ -938,7 +1097,7 @@ function check_phone($phone)
 	return preg_match($pattern, $phone);
 }
 
-// 谷歌翻译 --start
+// 谷歌翻译 --start------------------------------------------------------------------------------------------start
 // ar 是阿拉伯 en是英语 zh-CN是汉语
 // zh-CN:中文;auto:检测语言;sq:阿尔巴尼亚语;ar:阿拉伯语;am:阿姆哈拉语;az:阿塞拜疆语;ga:爱尔兰语;et:爱沙尼亚语;
 // eu:巴斯克语;be:白俄罗斯语;bg:保加利亚语;is:冰岛语;pl:波兰语;bs:波斯尼亚语;fa:波斯语;af:布尔语(南非荷兰语);da:丹麦语;
@@ -1130,9 +1289,9 @@ function deldir($dir)
 	}
 }
 
-// 谷歌翻译 --end
+// 谷歌翻译 --end-----------------------------------------------------------------------------------------------end
 
-// 百度翻译 --start zh:中文   en:英语   ara:阿拉伯语
+// 百度翻译 --start zh:中文   en:英语   ara:阿拉伯语--------------------------------------------------------------start
 // zh:中文;jp:日语;jpka:日语假名;th:泰语;fra:法语;;spa:西班牙语;kor:韩语;tr:土耳其语;vie:越南语;ms:马来语;
 // de:德语;ru:俄语;ir:伊朗语;ara:阿拉伯语;est:爱沙尼亚语;be:白俄罗斯语;bul:保加利亚语;hi:印地语;is:冰岛语;pl:波兰语;
 // fa:波斯语;dan:丹麦语;tl:菲律宾语;fin:芬兰语;nl:荷兰语;ca:加泰罗尼亚语;cs:捷克语;hr:克罗地亚语;lv:拉脱维亚语;
@@ -1537,7 +1696,7 @@ function send_post($url, $post_data)
 	return $result;
 }
 
-// 百度翻译 --end
+// 百度翻译 --end-----------------------------------------------------------------------------------------------end
 
 // 百度翻译和谷歌翻译的不同语言的字符串的对应关系
 function trans_lang()
@@ -1577,8 +1736,7 @@ function trans_lang()
 	dump($google_arr_new);
 }
 
-// 抓取数据 --start
-
+// 抓取数据 --start-------------------------------------------------------------------------------------------start
 /**
  * 访问网页
  *
@@ -1949,6 +2107,6 @@ function postman_souq($c)
 }
 
 
-// 抓取数据 --end
+// 抓取数据 --end-------------------------------------------------------------------------------------------end
 
 
