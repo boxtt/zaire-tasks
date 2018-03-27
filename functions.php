@@ -2105,8 +2105,98 @@ function postman_souq($c)
 		return $response;
 	}
 }
-
-
 // 抓取数据 --end-------------------------------------------------------------------------------------------end
 
+// 转换时间戳到制定的格式
+function trans_time($time, $type = 'Y-m-d H:i:s')
+{
+	return date($type, $time);
+}
 
+/**
+ * 检测数组中必须存在的键
+ * @param array        $arr
+ * @param array|string $fields
+ *
+ * @return bool
+ */
+function check_require(array $arr, $fields)
+{
+	if (is_string($fields))
+	{
+		$fields = explode(',', $fields);
+	}
+	foreach ($fields as $field)
+	{
+		if ( ! isset($arr[$field]) || empty($arr[$field]))
+		{
+			return FALSE;
+		}
+	}
+
+	return TRUE;
+}
+
+// 讲数组的所有值都递归的改成字符串类型的
+function trans_string(array &$arr)
+{
+	foreach ($arr as &$one)
+	{
+		if (is_bool($one))
+		{
+			$one = $one ? '1' : '0';
+		}
+		if (is_array($one))
+		{
+			$one = trans_string($one);
+		}
+		else
+		{
+			$one = strval($one);
+		}
+	}
+
+	return $arr;
+}
+
+// 检测手机号是哪个运营商的
+function telephone_type($telephone)
+{
+	$isChinaMobile = "/^134[0-8]\d{7}$|^(?:13[5-9]|147|15[0-27-9]|178|18[2-478])\d{8}$/"; //移动方面最新答复
+	$isChinaUnion  = "/^(?:13[0-2]|145|15[56]|176|18[56])\d{8}$/"; //向联通微博确认并未回复
+	$isChinaTelcom = "/^(?:133|153|177|173|18[019])\d{8}$/"; //1349号段 电信方面没给出答复，视作不存在
+	if (preg_match($isChinaMobile, $telephone))
+	{
+		return '移动';
+	}
+	elseif (preg_match($isChinaUnion, $telephone))
+	{
+		return '联通';
+	}
+	elseif (preg_match($isChinaTelcom, $telephone))
+	{
+		return '电信';
+	}
+	else
+	{
+		return '其他';
+	}
+}
+
+// 检测加油卡是中石油的还是中石化的
+function fuel_card_type($card)
+{
+	// 中国石油加油卡是“9”开头16位卡号。 中国石化是“1”开头19位的卡号
+	if (strlen($card) == 16 && substr($card, 0, 1) == '9')
+	{
+		return '中石油';
+	}
+	elseif (strlen($card) == 19 && substr($card, 0, 1) == '1')
+	{
+		return '中石化';
+	}
+	else
+	{
+		return '其他';
+	}
+}
