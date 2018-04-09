@@ -1,0 +1,26 @@
+1：数据表中的默认排序是添加到表中的顺序，如果数据进行过删除操作，那么新增加的数据会填补到之前删除的数据的位置，所以，如果不明确控制的话，不能依赖于默认的排列书序，（除非所有数据没有删除过（做的软删除））
+2：order by 字句使用的列可以是 非检索的列（即可以是select 之外的字段）
+3：order by 还支持按照相对列的位置进行排序，如 select name,value,id from products order by 2 desc,3 asc;
+4：order by 的默认排序是asc
+5：where 的逻辑组合中，优先处理AND 之后才会处理 OR
+6：where between 能够匹配两个边界值
+7：where like 模糊匹配 %可以匹配0个字符或者多个字符，下划线_只能匹配一个字符 字符串中，空格也会匹配，中括号[]表示满足其中一个通配符就好，可以在[^]表示否定，除非必要，否则不要把他们用在搜索模式的开始处，这样是最慢的
+8：函数 trim ltrim rtrim upper lower left(field int):返回左边的字符串 right() mid(field start end) length:返回串的长度
+9：聚集函数用来汇总数据  avg sum count min max ，其中distinct 用在avg中表示排除重复值
+10：联结好像就是直接查询两个表，不用join 如select * from table1,table2 where table1.name=table2.username ，这个where条件就是联结条件
+11：视图 view，虚拟表
+12：存储过程 procedure
+13：事务处理 transaction processing    commit rollback
+14：游标 cursor
+15：高级特性   约束、主键 primary key、外键 references、唯一约束 unique、检查约束 check、索引 index、触发器 trigger
+16：数据类型 
+串（字符串），定长、变长   char varchar text  使用引号
+数值（数字） decimal  float int real smallint tinyint  不适用引号
+日期和时间数据类型  date datetime(timestamp) smalldatetime精确到分  time 
+二进制数据类型   binary lognraw raw varbinary
+
+
+null
+1；自联结，内联结，外联结
+
+

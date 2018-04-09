@@ -1,0 +1,32 @@
+tp5 学习
+base.php 里面的有个配置文件的读取，.env是用 a=4 来配置的，如果是数组，必须放在最后，用[array]放在数组配置项的前边，也可以用下划线 _ 来分割
+
+实例化请求类的时候，new static 和 new self 的区别  http://www.jb51.net/article/54167.htm
+
+获取配置项的时候，在runtimes目录下，和application目录下，及这两个目录下的各个模块为名字的目录，都会有初始化文件 init.php 先被加载
+如果都没有这两个init.php文件的话，按照一下顺序加载配置文件，后边的会覆盖前边的：
+application下的config.php文件，模块下的config.php文件，
+database.php文件，模块下的database.php文件
+extra目录下的所有文件，模块下的extra目录下的所有文件
+根据配置项中的app_status状态，加载application目录下的该APP状态的配置文件，模块下的该APP状态的配置文件
+加载tag.php的配置文件
+加载公共配置文件
+加载模块语言包
+
+
+http://pan.baidu.com/share/init?shareid=jGoSqUi&uk=jGoSqUi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

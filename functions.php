@@ -480,6 +480,7 @@ function dump($var, $echo = TRUE, $label = NULL, $strict = TRUE)
 
 /**
  * 即时输出，在命令行模式下
+ *
  * @param $string
  */
 function output($string)
@@ -660,6 +661,7 @@ function test1()
 	ll($h, 'test1:'.date('Y-m-d H:i:s', time()));
 	close_file($h);
 }
+
 //************************************************************************************************
 
 //去掉数字段前面的0
@@ -902,6 +904,7 @@ function echo_arr($result)
 		echo is_cli() ? "\n" : '<br/>';
 	}
 }
+
 // 把字符变成竖直的，然后在横向切割
 function change_arr($result)
 {
@@ -2105,6 +2108,7 @@ function postman_souq($c)
 		return $response;
 	}
 }
+
 // 抓取数据 --end-------------------------------------------------------------------------------------------end
 
 // 转换时间戳到制定的格式
@@ -2115,6 +2119,7 @@ function trans_time($time, $type = 'Y-m-d H:i:s')
 
 /**
  * 检测数组中必须存在的键
+ *
  * @param array        $arr
  * @param array|string $fields
  *
@@ -2199,4 +2204,26 @@ function fuel_card_type($card)
 	{
 		return '其他';
 	}
+}
+
+// 判断是否是电话号码
+function is_phone($phone, $preg = '')
+{
+	if (empty($preg))
+	{
+		$preg = '/^1[3|4|5|7|8]\d{9}$/';
+	}
+
+	return (bool) preg_match($preg, $phone);
+}
+
+// 判断是否是邮箱
+function is_email($email, $preg = '')
+{
+	if (empty($preg))
+	{
+		$preg = '/^1[3|4|5|7|8]\d{9}$/';
+	}
+
+	return (bool) preg_match($preg, $email);
 }
