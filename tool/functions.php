@@ -772,7 +772,7 @@ function num2ch($num) //整体读取转换
 // 文件操作类的，记录日志用的
 function init_file($surl)
 {
-	$file = __DIR__.'/'.$surl.'.txt';
+	$file = __DIR__ . 'functions.php/' .$surl.'.txt';
 	if ( ! is_file($file))
 	{
 		touch($file);
@@ -808,8 +808,8 @@ function change_file($surl, $start, $end_old, $end_new)
 {
 	$file_old = $surl.'-'.$start.'-'.$end_old;
 	$file_new = $surl.'-'.$start.'-'.$end_new;
-	$old      = __DIR__.'/'.$file_old.'.txt';
-	$new      = __DIR__.'/'.$file_new.'.txt';
+	$old      = __DIR__ . 'functions.php/' .$file_old.'.txt';
+	$new      = __DIR__ . 'functions.php/' .$file_new.'.txt';
 	output('old:'.$old.'--new:'.$new);
 	if (file_exists($old))
 	{
@@ -822,6 +822,63 @@ function change_file($surl, $start, $end_old, $end_new)
 			rename($old, $new);
 		}
 	}
+}
+
+// 获取指定文件夹里面的所有子文件夹和文件
+function get_allfiles($path, &$files)
+{
+    if (is_dir($path))
+    {
+        $dp = dir($path);
+        $file = $dp->read();
+        $e = $file!==false?true:false;
+        while ($e)
+        {
+            if ($file != "." && $file != "..")
+            {
+                get_allfiles($path."/".$file, $files);
+            }
+        }
+        $dp->close();
+    }
+    if (is_file($path))
+    {
+        output($path);
+        unlink($path);
+//		$files[] = $path;
+    }
+}
+
+function get_filenamesbydir($dir)
+{
+    $files = array();
+    get_allfiles($dir, $files);
+
+    return $files;
+}
+
+// 删除空文件夹
+function rm_empty_dir($path)
+{
+    if (is_dir($path) && ($handle = opendir($path)) !== FALSE)
+    {
+        while (($file = readdir($handle)) !== FALSE)
+        {// 遍历文件夹
+            if ($file != '.' && $file != '..')
+            {
+                $curfile = $path.'/'.$file;// 当前目录
+                if (is_dir($curfile))
+                {// 目录
+                    rm_empty_dir($curfile);// 如果是目录则继续遍历
+                    if (count(scandir($curfile)) == 2)
+                    {//目录为空,=2是因为.和..存在
+                        rmdir($curfile);// 删除空目录
+                    }
+                }
+            }
+        }
+        closedir($handle);
+    }
 }
 
 //************************************************************************************************

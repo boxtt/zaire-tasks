@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__.'/functions.php';
+require_once __DIR__ . '/functions.php';
 set_time_limit(5);
 /***
  * 简单验证码识别

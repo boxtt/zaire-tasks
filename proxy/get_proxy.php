@@ -1,6 +1,6 @@
 <?php
 require_once './mysql.php';
-require_once __DIR__.'/functions.php';
+require_once __DIR__ . '/functions.php';
 //set_time_limit(0);
 //$db = sql::getInstance();
 

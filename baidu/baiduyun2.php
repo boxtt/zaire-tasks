@@ -495,7 +495,7 @@ function output($string)
 
 function init_file($surl)
 {
-	$file = __DIR__.'/'.$surl.'.txt';
+	$file = __DIR__ . 'baiduyun2.php/' .$surl.'.txt';
 	if ( ! is_file($file))
 	{
 		touch($file);

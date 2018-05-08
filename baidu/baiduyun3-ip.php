@@ -17,7 +17,7 @@
  * php baiduyun3-ip.php --surl=jGoSqUi --start=23202 --sure=1 --limit=100 --error=20 --repeat=20
  */
 
-require_once __DIR__.'/functions.php';
+require_once __DIR__ . '/functions.php';
 
 // 获取参数
 $data   = get_data();
