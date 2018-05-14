@@ -2,6 +2,7 @@
 
 // 设置时区为上海
 ini_set('date.timezone', 'Asia/Shanghai');
+// 自己写的
 if (!function_exists('array_column')) {
     /**
      * 这个函数上就是因为php5.3没有这个函数，所以自己实现
@@ -28,6 +29,37 @@ if (!function_exists('array_column')) {
         return $return;
     }
 }
+
+// 考图上写的
+if (!function_exists('array_column')) {
+    function array_column($input, $columnKey, $indexKey = null)
+    {
+        $columnKeyIsNumber = (is_numeric($columnKey)) ? true : false;
+        $indexKeyIsNull = (is_null($indexKey)) ? true : false;
+        $indexKeyIsNumber = (is_numeric($indexKey)) ? true : false;
+        $result = array();
+        foreach ((array)$input as $key => $row) {
+            if ($columnKeyIsNumber) {
+                $tmp = array_slice($row, $columnKey, 1);
+                $tmp = (is_array($tmp) && !empty($tmp)) ? current($tmp) : null;
+            } else {
+                $tmp = isset($row[$columnKey]) ? $row[$columnKey] : null;
+            }
+            if (!$indexKeyIsNull) {
+                if ($indexKeyIsNumber) {
+                    $key = array_slice($row, $indexKey, 1);
+                    $key = (is_array($key) && !empty($key)) ? current($key) : null;
+                    $key = is_null($key) ? 0 : $key;
+                } else {
+                    $key = isset($row[$indexKey]) ? $row[$indexKey] : 0;
+                }
+            }
+            $result[$key] = $tmp;
+        }
+        return $result;
+    }
+}
+
 
 /**
  * 获取代理的ip和端口
@@ -409,7 +441,7 @@ function get_total_millisecond()
 // 获取随机的user-agent
 function get_user_agent()
 {
-    $user_agent = require __DIR__.'./user_agent.php';
+    $user_agent = require __DIR__ . './user_agent.php';
 
     return $user_agent;
 }
