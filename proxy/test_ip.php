@@ -1,7 +1,8 @@
 <?php
-require_once './functions.php';
+require_once './../tool/functions.php';
 
 echo '<pre>';
+// 判断是否可用的时候也需要设置断开时间，觉得可以设置2秒
 print_r(xici_curl('www.guoyunxia.com/get_ip.php'));
 die;
 
