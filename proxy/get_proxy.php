@@ -28,60 +28,75 @@ $urls = [
 		'valid' => FALSE,
 	],
 	[
-		'desc'  => '西刺代理高匿代理',
-		'type'  => 'xicidaili',
-		'url'   => 'http://www.xicidaili.com/nn/{page}',
-		'host'  => 'www.xicidaili.com',
+		'desc'       => '西刺代理高匿代理，每天访问的有限制，还是次数有限制，这个需要在看看',
+		'type'       => 'xicidaili',
+		'url'        => 'http://www.xicidaili.com/nn/{page}',
+		'host'       => 'www.xicidaili.com',
 		'page_start' => 1,   // 如果有分页，这是开始的页数
 		'page_end'   => 2048,  // 如果有分页，这是结束的页数
-		'valid' => TRUE,
+		'valid'      => TRUE,
 	],
 	[
-		'desc' => '西刺代理普通代理',
-		'type' => 'xicidaili',
-		'url'  => 'http://www.xicidaili.com/nt/{page}',
-		'host' => 'www.xicidaili.com',
+		'desc'       => '西刺代理普通代理',
+		'type'       => 'xicidaili',
+		'url'        => 'http://www.xicidaili.com/nt/{page}',
+		'host'       => 'www.xicidaili.com',
 		'page_start' => 1,   // 如果有分页，这是开始的页数
 		'page_end'   => 667,  // 如果有分页，这是结束的页数
 		'valid'      => TRUE,
 	],
 	[
-		'desc' => '西刺代理https代理',
-		'type' => 'xicidaili',
-		'url'  => 'http://www.xicidaili.com/wn/{page}',
-		'host' => 'www.xicidaili.com',
+		'desc'       => '西刺代理https代理',
+		'type'       => 'xicidaili',
+		'url'        => 'http://www.xicidaili.com/wn/{page}',
+		'host'       => 'www.xicidaili.com',
 		'page_start' => 1,   // 如果有分页，这是开始的页数
 		'page_end'   => 1173,  // 如果有分页，这是结束的页数
 		'valid'      => TRUE,
 	],
 	[
-		'desc' => '西刺代理http代理',
-		'type' => 'xicidaili',
-		'url'  => 'http://www.xicidaili.com/wt/{page}',
-		'host' => 'www.xicidaili.com',
+		'desc'       => '西刺代理http代理',
+		'type'       => 'xicidaili',
+		'url'        => 'http://www.xicidaili.com/wt/{page}',
+		'host'       => 'www.xicidaili.com',
 		'page_start' => 1,   // 如果有分页，这是开始的页数
 		'page_end'   => 1769,  // 如果有分页，这是结束的页数
 		'valid'      => TRUE,
 	],
 	[
-		'type' => 'goubanjia',
-		'url'  => 'http://www.data5u.com/free/gngn/index.shtml',
-		'host' => '',
+		'desc'  => '无忧代理-全部',
+		'type'  => 'data5u',
+		'url'   => 'http://www.data5u.com/free/index.shtml',
+		'host'  => 'www.data5u.com',
+		'valid' => TRUE,
 	],
 	[
-		'type' => 'goubanjia',
-		'url'  => 'http://www.data5u.com/free/gnpt/index.shtml',
-		'host' => '',
+		'desc'  => '无忧代理-国内高匿',
+		'type'  => 'data5u',
+		'url'   => 'http://www.data5u.com/free/gngn/index.shtml',
+		'host'  => 'www.data5u.com',
+		'valid' => TRUE,
 	],
 	[
-		'type' => 'goubanjia',
-		'url'  => 'http://www.data5u.com/free/gwgn/index.shtml',
-		'host' => '',
+		'desc'  => '无忧代理-国内普通',
+		'type'  => 'data5u',
+		'url'   => 'http://www.data5u.com/free/gnpt/index.shtml',
+		'host'  => 'www.data5u.com',
+		'valid' => TRUE,
 	],
 	[
-		'type' => 'goubanjia',
-		'url'  => 'http://www.data5u.com/free/gwpt/index.shtml',
-		'host' => '',
+		'desc'  => '无忧代理-国外高匿',
+		'type'  => 'data5u',
+		'url'   => 'http://www.data5u.com/free/gwgn/index.shtml',
+		'host'  => 'www.data5u.com',
+		'valid' => TRUE,
+	],
+	[
+		'desc'  => '无忧代理-国外普通',
+		'type'  => 'data5u',
+		'url'   => 'http://www.data5u.com/free/gwpt/index.shtml',
+		'host'  => 'www.data5u.com',
+		'valid' => TRUE,
 	],
 	[
 		'type' => 'goubanjia',
@@ -138,7 +153,7 @@ foreach ($urls as $one)
 	{
 		continue;
 	}
-	if ($type != 'xicidaili')
+	if ($type != 'data5u')
 	{
 		continue;
 	}
@@ -158,13 +173,10 @@ foreach ($urls as $one)
 
 	foreach ($now_urls as $url)
 	{
-
 		dump('当前设置访问的网站：'.$url);
-		dump($one);
 		// 抓取页面
-		$content = file_get_contents('./tmp.html');
+//		$content = file_get_contents('./tmp.html');
 		$content = proxy_curl($url, $host);
-		dump($content);
 		ll($h, $content);
 		switch ($type)
 		{
@@ -176,6 +188,9 @@ foreach ($urls as $one)
 				break;
 			case 'xicidaili':
 				get_xicidaili_proxy($content);
+				break;
+			case 'data5u':
+				get_data5u_proxy($content);
 				break;
 			default:
 				die('no this type');
@@ -311,6 +326,8 @@ function get_xicidaili_proxy($content)
 	$tr_preg = '/<tr([\s\S.]*?)<\/tr>/';
 	preg_match_all($tr_preg, $content, $matches);
 	$matches = $matches[1];
+	dump($matches);
+	die;
 
 	$ip_preg   = '/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/';
 	$port_preg = '/<td>([0-9]{1,5})<\/td>/';
@@ -334,6 +351,14 @@ function get_xicidaili_proxy($content)
 			dump($data);
 		}
 	}
+}
+
+function get_data5u_proxy($content)
+{
+	$preg = '/<ul\sclass=\"l2\">([.\s\S]*?)<\/ul>/';
+	preg_match_all($preg,$content,$matches);
+	$content = $matches[1];
+	$preg = '//';
 }
 
 close_file($h);
