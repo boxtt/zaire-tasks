@@ -388,25 +388,28 @@ function get_code($cookie, $ip, $port)
 //************************************************************************************************end
 
 // 获取西刺代理的免费代理ip
-function xici_curl($url)
+function proxy_curl($url, $host)
 {
     $time = time();
     list($ip, $port) = get_ip();
     $proxy = $ip . ':' . $port;
     $user_agent = get_user_agent();
     $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_PROXY, $proxy);
+//    curl_setopt($ch, CURLOPT_PROXY, $proxy);
 //	curl_setopt($ch, CURLOPT_PROXY, $ip);
 //	curl_setopt($ch, CURLOPT_PROXYPORT, $port);
     curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    //https的访问
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Accept:text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
         //		'Accept-Encoding:gzip, deflate',
         'Accept-Language:zh-CN,zh;q=0.9',
         'Cache-Control:no-cache',
-        'Host:www.xicidaili.com',
+        'Host:' . $host,
         'Pragma:no-cache',
         'Proxy-Connection:keep-alive',
         //		'Connection:keep-alive',
@@ -741,9 +744,9 @@ function num2ch($num) //整体读取转换
 
 //************************************************************************************************
 // 文件操作类的，记录日志用的
-function init_file($surl)
+function init_file($surl, $ext = 'txt')
 {
-    $file = __DIR__ . 'functions.php/' . $surl . '.txt';
+    $file = './' . $surl . '.' . $ext;
     if (!is_file($file)) {
         touch($file);
     } else {
@@ -755,14 +758,18 @@ function init_file($surl)
     return $h;
 }
 
-function ll($h, $data, $eol = TRUE)
+function ll($h, $data, $json_encode = false, $eol = TRUE, $output = false)
 {
-    $new_data = json_encode($data);
+    if ($json_encode) {
+        $new_data = json_encode($data);
+    }
     $data = empty($new_data) ? $data : $new_data;
     if ($eol) {
         $data .= PHP_EOL;
     }
-    output($data);
+    if ($output) {
+        output($data);
+    }
     fwrite($h, $data);
 }
 
