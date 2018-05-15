@@ -13,8 +13,10 @@ $urls = [
     ],
     [
         'type' => 'kuaidaili',
-        'url' => 'https://www.kuaidaili.com/ops/proxylist/1/',
-        'host' => 'www.kuaidaili.com'
+        'url' => 'https://www.kuaidaili.com/ops/proxylist/{page}/',
+        'host' => 'www.kuaidaili.com',
+        'page_start' => 1,
+        'page_end' => 10,
     ],
     [
         'type' => 'goubanjia',
@@ -104,22 +106,34 @@ $urls = [
 ];
 foreach ($urls as $one) {
     $file = 'tmp';
-    $h = init_file($file, 'html');
+//    $h = init_file($file, 'html');
     $url = get_arr($one, 'url');
     $host = get_arr($one, 'host');
     $type = get_arr($one, 'type');
-
+    $page_start = get_arr($one, 'page_start');
+    $page_end = get_arr($one, 'page_end');
     if ($type != 'kuaidaili') {
         continue;
     }
 
+    $now_urls = [];
+    if($page_start&&$page_end)
+    {
+
+    }
+    else
+    {
+        $now_urls[] = $url;
+    }
+
+    
     dump('当前设置访问的网站：' . $url);
     dump($one);
     // 抓取页面
     $content = file_get_contents('./tmp.html');
     $content = proxy_curl($url, $host);
-    dump($content);
-    ll($h, $content);
+//    dump($content);
+//    ll($h, $content);
     switch ($type) {
         case 'goubanjia':
             get_goubanjia_proxy($content);
@@ -220,7 +234,25 @@ function get_goubanjia_proxy($content)
 
 function get_kuaidaili_proxy($content)
 {
-    dump($content);
+    $urls = [];
+    $preg = '/<tbody\sclass=\"center\">([\s\S.]*?)<\/tbody>/';
+    preg_match_all($preg, $content, $matches);
+    $content = $matches[1][3];
+    $preg = '/<tr>([.\s\S]*?)<\/tr>/';
+    preg_match_all($preg, $content, $matches);
+    $urls = array_map(function ($one) {
+        $preg = '/\">([.\s\S]*?)</';
+        preg_match_all($preg, $one, $matches);
+        $match = $matches[1];
+        return [
+            'ip' => $match[0],
+            'port' => $match[1],
+            'type' => $match[3],
+            'anonymous' => $match[2],
+            'desc' => $match['5'],
+        ];
+    }, $matches[1]);
+    dump($urls);
 }
 
 
