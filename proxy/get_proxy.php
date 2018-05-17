@@ -215,8 +215,7 @@ function get_goubanjia_proxy($content)
 			preg_match_all($preg, $content, $matches);
 			if (count($matches) > 1)
 			{
-				$urls = array_map(function ($one)
-				{
+				$urls = array_map(function ($one) {
 					$preg = '/<td([\s\S.]*?)<\/td>/';
 					preg_match_all($preg, $one, $re);
 					$re        = $re[1];
@@ -304,8 +303,7 @@ function get_kuaidaili_proxy($content)
 	$content = $matches[1][3];
 	$preg    = '/<tr>([.\s\S]*?)<\/tr>/';
 	preg_match_all($preg, $content, $matches);
-	$urls = array_map(function ($one)
-	{
+	$urls = array_map(function ($one) {
 		$preg = '/\">([.\s\S]*?)</';
 		preg_match_all($preg, $one, $matches);
 		$match = $matches[1];
@@ -356,9 +354,9 @@ function get_xicidaili_proxy($content)
 function get_data5u_proxy($content)
 {
 	$preg = '/<ul\sclass=\"l2\">([.\s\S]*?)<\/ul>/';
-	preg_match_all($preg,$content,$matches);
+	preg_match_all($preg, $content, $matches);
 	$content = $matches[1];
-	$preg = '//';
+	$preg    = '//';
 }
 
 close_file($h);
