@@ -8,7 +8,7 @@
  */
 
 ini_set('memory_limit', '2G');
-set_time_limit(0);
+set_time_limit(10);
 
 $count_bite = 107;
 // 5M
