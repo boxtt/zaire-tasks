@@ -1,0 +1,12 @@
+[19-May-2018 10:55:10 PRC] PHP Fatal error:  Call to undefined function dump() in E:\zaire\tasks\exercise\joseph_ring.php on line 30
+[19-May-2018 10:55:10 PRC] PHP Stack trace:
+[19-May-2018 10:55:10 PRC] PHP   1. {main}() E:\zaire\tasks\exercise\joseph_ring.php:0
+[19-May-2018 10:57:12 Asia/Shanghai] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in E:\zaire\tasks\exercise\joseph_ring.php on line 20
+[19-May-2018 10:57:12 Asia/Shanghai] PHP Stack trace:
+[19-May-2018 10:57:12 Asia/Shanghai] PHP   1. {main}() E:\zaire\tasks\exercise\joseph_ring.php:0
+[19-May-2018 10:57:37 Asia/Shanghai] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in E:\zaire\tasks\exercise\joseph_ring.php on line 20
+[19-May-2018 10:57:37 Asia/Shanghai] PHP Stack trace:
+[19-May-2018 10:57:37 Asia/Shanghai] PHP   1. {main}() E:\zaire\tasks\exercise\joseph_ring.php:0
+[19-May-2018 10:57:48 Asia/Shanghai] PHP Fatal error:  Maximum execution time of 10 seconds exceeded in E:\zaire\tasks\exercise\joseph_ring.php on line 20
+[19-May-2018 10:57:48 Asia/Shanghai] PHP Stack trace:
+[19-May-2018 10:57:48 Asia/Shanghai] PHP   1. {main}() E:\zaire\tasks\exercise\joseph_ring.php:0

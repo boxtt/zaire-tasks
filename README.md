@@ -12,3 +12,5 @@ tool 是工具文件夹
 proxy 是代理的一些东西
 
 listory_shadowsocks 是这两个应用的备份
+
+exercise   练习一些问题的文件夹
