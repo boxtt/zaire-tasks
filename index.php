@@ -2,6 +2,11 @@
 header("Content-type: text/html; charset=utf-8");
 require './tool/functions.php';
 
+$file = 'E:\zaire\tasks\jz.sql';
+$re = get_content_by_line($file);
+dump($re);
+die('ok');
+
 // 快递100查询的接口
 //$num = '889352208136690662';
 $num = '889602731173989991';
