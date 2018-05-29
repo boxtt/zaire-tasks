@@ -99,24 +99,36 @@ $urls = [
 		'valid' => TRUE,
 	],
 	[
-		'type' => 'goubanjia',
-		'url'  => 'http://www.mayidaili.com/free/1',
-		'host' => '',
+		'desc'       => '蚂蚁代理，这个端口也是图片，另，图片上还有干扰线',
+		'type'       => 'mayidaili',
+		'url'        => 'http://www.mayidaili.com/free/{page}',
+		'host'       => 'www.mayidaili.com',
+		'page_start' => 1,   // 如果有分页，这是开始的页数
+		'page_end'   => 5928,  // 如果有分页，这是结束的页数
+		'valid'      => TRUE,
 	],
 	[
-		'type' => 'goubanjia',
-		'url'  => 'http://31f.cn/',
-		'host' => '',
+		'desc'  => '三一代理，每小时更新',
+		'type'  => 'saiyidaili',
+		'url'   => 'http://31f.cn/',
+		'host'  => '31f.cn',
+		'valid' => TRUE,
 	],
 	[
-		'type' => 'goubanjia',
-		'url'  => 'http://ip.zdaye.com/FreeIPlist.html',
-		'host' => '',
+		'desc'  => '站大爷，报错了，不知道为什么',
+		'type'  => 'zhandaye',
+		'url'   => 'http://ip.zdaye.com/FreeIPlist.html',
+		'host'  => 'ip.zdaye.com',
+		'valid' => FALSE,
 	],
 	[
-		'type' => 'goubanjia',
-		'url'  => 'http://www.66ip.cn/',
-		'host' => '',
+		'desc'       => '66ip的代理，返回没有结果',
+		'type'       => 'ip66',
+		'url'        => 'http://www.66ip.cn/{page}.html',
+		'host'       => 'www.66ip.cn',
+		'page_start' => 1,   // 如果有分页，这是开始的页数
+		'page_end'   => 1261,  // 如果有分页，这是结束的页数
+		'valid'      => FALSE,
 	],
 	[
 		'type' => 'goubanjia',
@@ -153,7 +165,7 @@ foreach ($urls as $one)
 	{
 		continue;
 	}
-	if ($type != 'data5u')
+	if ($type != 'ip66')
 	{
 		continue;
 	}
@@ -192,12 +204,23 @@ foreach ($urls as $one)
 			case 'data5u':
 				get_data5u_proxy($content);
 				break;
+			case 'mayidaili':
+				get_mayidaili_proxy($content);
+				break;
+			case 'saiyidaili':
+				get_saiyidaili_proxy($content);
+				break;
+			case 'zhandaye':
+				get_zhandaye_proxy($content);
+			case 'ip66':
+				get_ip66_proxy($content);
+				break;
 			default:
 				die('no this type');
 				break;
 		}
+		die('one_all');
 	}
-	die('one');
 }
 die('ok');
 
@@ -356,7 +379,125 @@ function get_data5u_proxy($content)
 	$preg = '/<ul\sclass=\"l2\">([.\s\S]*?)<\/ul>/';
 	preg_match_all($preg, $content, $matches);
 	$content = $matches[1];
-	$preg    = '//';
+	foreach ($content as $one)
+	{
+		$preg = '/<li([.\s\S]*?<\/li>)/';
+		preg_match_all($preg, $one, $matches);
+		$match = $matches[1];
+		$data  = [];
+		foreach ($match as $k => $v)
+		{
+			if ($k == 0)
+			{
+				$ip         = substr($v, 1, - 5);
+				$data['ip'] = $ip;
+			}
+			elseif ($k == 1)
+			{
+				$preg = '/>([0-9]{1,5})</';
+				preg_match_all($preg, $v, $v_match);
+				$data['port'] = $v_match[1][0];
+			}
+			elseif ($k == 2)
+			{
+				$preg = '/\/index\.html\">([.\s\S]*?)<\/a>/';
+				preg_match_all($preg, $v, $v_match);
+				$data['anonymous'] = $v_match[1][0];
+			}
+			elseif ($k == 3)
+			{
+				$preg = '/\/index\.html\">([.\s\S]*?)<\/a>/';
+				preg_match_all($preg, $v, $v_match);
+				$data['type'] = $v_match[1][0];
+			}
+		}
+		dump($data);
+	}
 }
 
-close_file($h);
+function get_mayidaili_proxy($content)
+{
+	$preg = '/<tbody>([.\s\S]*?)<\/tbody>/';
+	preg_match_all($preg, $content, $matches);
+	$content = $matches[1][0];
+
+	$preg = '/<tr>([.\s\S]*?)<\/tr>/';
+	preg_match_all($preg, $content, $matches);
+	$matches = $matches[1];
+	foreach ($matches as $match)
+	{
+		$preg = '/<td>([.\s\S]*?)<\/td>/';
+		preg_match_all($preg, $match, $one_matches);
+		$one_matches = $one_matches[1];
+		$data        = [];
+		foreach ($one_matches as $k => $v)
+		{
+			switch ($k)
+			{
+				case 0:
+					$data['ip'] = trim($v);
+					break;
+				case 1:
+					$data['port'] = trim($v);
+					break;
+				case 2:
+					$preg = '/\">([.\s\S]*?)<\/a>/';
+					preg_match_all($preg, $v, $v_matches);
+					$data['anonymous'] = $v_matches[1][0];
+					break;
+				default:
+					break;
+			}
+		}
+		dump($data);
+	}
+}
+
+function get_saiyidaili_proxy($content)
+{
+	$preg = '/<table([.\s\S]*?)<\/table>/';
+	preg_match_all($preg, $content, $matches);
+	$content = $matches[1][0];
+
+	$preg = '/<tr>([.\s\S]*?)<\/tr>/';
+	preg_match_all($preg, $content, $matches);
+	$content = $matches[1];
+	foreach ($content as $k => $one)
+	{
+		if ($k)
+		{
+			$preg = '/<td>([.\s\S]*?)<\/td>/';
+			preg_match_all($preg, $one, $matches);
+			$matches = $matches[1];
+			$data    = [];
+			foreach ($matches as $kk => $v)
+			{
+				if ($kk == 1)
+				{
+					$data['ip'] = $v;
+				}
+				elseif ($kk == 2)
+				{
+					$data['port'] = $v;
+				}
+				elseif ($kk == 4)
+				{
+					$preg = '/\">([.\s\S]*?)<\/a>/';
+					preg_match_all($preg, $v, $matches);
+					$data['type'] = $matches[1][0];
+				}
+			}
+			dump($data);
+		}
+	}
+}
+
+function get_zhandaye_proxy($content)
+{
+	dump($content);
+}
+
+function get_ip66_proxy($content)
+{
+	dump($content);
+}

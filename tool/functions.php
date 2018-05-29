@@ -450,6 +450,7 @@ function proxy_curl($url, $host)
 	]);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 	$result = curl_exec($ch);
+	$err = curl_error($ch);
 	curl_close($ch);
 
 	return $result;
