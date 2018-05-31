@@ -450,7 +450,7 @@ function proxy_curl($url, $host)
 	]);
 	curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 	$result = curl_exec($ch);
-	$err = curl_error($ch);
+	$err    = curl_error($ch);
 	curl_close($ch);
 
 	return $result;
@@ -1048,6 +1048,32 @@ function echo_arr($result)
 		}
 		echo is_cli() ? "\n" : '<br/>';
 	}
+}
+
+// 输出二维数据
+function echo_arr_one($result)
+{
+	if (is_array($result))
+	{
+		foreach ($result as $one)
+		{
+			echo_arr_one($one);
+		}
+	}
+	else
+	{
+		echo $result.(is_cli() ? "\t" : '&nbsp;&nbsp;&nbsp;&nbsp;');
+	}
+}
+
+function echo_hr()
+{
+	echo '<hr/>';
+}
+
+function echo_br()
+{
+	echo '<br/>';
 }
 
 // 把字符变成竖直的，然后在横向切割
@@ -2444,6 +2470,7 @@ function image_resize($source_path, $target_path, $target_width = 200, $target_h
 		$source_height);
 //	header('Content-type: image/jpeg');
 	imagejpeg($target_image, $target_path, 100);
+
 	return TRUE;
 }
 
