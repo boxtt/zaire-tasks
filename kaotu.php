@@ -68,7 +68,7 @@ foreach ($modules as $module)
 								if ($re !== FALSE)
 								{
 //									echo_t(3, '---');
-									$use = str_replace([' ', ';', 'use'], ['', '', ''], $line);
+									$use[] = str_replace([' ', ';', 'use'], ['', '', ''], $line);
 //									output($use);
 								}
 								$re = strpos($line, 'extends');
@@ -80,10 +80,28 @@ foreach ($modules as $module)
 									$extends = '';
 									if (isset($la[1]))
 									{
-										$extends = isset($use)
-											? $use
-											: (strpos($la[1], '\\') !== FALSE ? $la[1]
-												: '\\'.$module.'\\'.$layer.'\\'.$la[1]);
+										if (strpos($la[1], '\\') !== FALSE)
+										{
+											$extends = $la[1];
+										}
+										else
+										{
+											if (isset($use))
+											{
+												foreach ($use as $v)
+												{
+													if (strpos($v, $la[1]))
+													{
+														$extends = $v;
+														break;
+													}
+												}
+											}
+											else
+											{
+												$extends = '\\'.$module.'\\'.$layer.'\\'.$la[1];
+											}
+										}
 									}
 //									echo_t(3, '+++');
 //									output($class.'--extends--'.$extends);
@@ -136,7 +154,9 @@ foreach ($arr as $k => $v)
 	$new_arr[$k] = $one;
 }
 
-//dump($new_arr);
+echo '<pre>';
+print_r($new_arr);
+die('k');
 
 function get_v($k, $arr)
 {
@@ -204,9 +224,6 @@ foreach ($new_arr as $vv)
 		}
 	}
 }
-
-
-
 
 echo '<pre>';
 print_r($data);
