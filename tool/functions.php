@@ -876,7 +876,7 @@ function change_file($surl, $start, $end_old, $end_new)
 }
 
 // 获取指定文件夹里面的所有子文件夹和文件
-function get_allfiles($path, &$files)
+function get_all_files($path, &$files)
 {
 	if (is_dir($path))
 	{
@@ -887,7 +887,7 @@ function get_allfiles($path, &$files)
 		{
 			if ($file != "." && $file != "..")
 			{
-				get_allfiles($path."/".$file, $files);
+				get_all_files($path."/".$file, $files);
 			}
 		}
 		$dp->close();
@@ -895,15 +895,15 @@ function get_allfiles($path, &$files)
 	if (is_file($path))
 	{
 		output($path);
-		unlink($path);
+//		unlink($path);
 //		$files[] = $path;
 	}
 }
 
-function get_filenamesbydir($dir)
+function get_files_by_dir($dir)
 {
 	$files = array();
-	get_allfiles($dir, $files);
+	get_all_files($dir, $files);
 
 	return $files;
 }
@@ -1066,6 +1066,27 @@ function echo_arr_one($result)
 	}
 }
 
+function echo_t($num = 1,$exp='')
+{
+	$num = (int) $num;
+	if ($num < 1)
+	{
+		$num = 1;
+	}
+	if ($num > 10)
+	{
+		$num = 10;
+	}
+	for ($i = 0; $i < $num; $i ++)
+	{
+		echo(is_cli() ? "\t" : '&nbsp;&nbsp;&nbsp;&nbsp;');
+	}
+	if($exp)
+	{
+		echo $exp;
+	}
+}
+
 function echo_hr()
 {
 	echo '<hr/>';
@@ -1073,7 +1094,7 @@ function echo_hr()
 
 function echo_br()
 {
-	echo '<br/>';
+	echo (is_cli()) ? "\r\n" : '<br/>';
 }
 
 // 把字符变成竖直的，然后在横向切割
@@ -2501,4 +2522,34 @@ function get_images_info($images)
 	);
 
 	return $new_img_info;
+}
+
+/**
+ * 去除转义字符；
+ *
+ * @param array $value 待转义数组
+ *
+ * @return array 转义后的数组
+ * @author demo
+ */
+function stripslashes_deep($value)
+{
+	if (is_array($value))
+	{
+		$value = array_map('stripslashes_deep', $value);
+	}
+	elseif (is_object($value))
+	{
+		$vars = get_object_vars($value);
+		foreach ($vars as $key => $data)
+		{
+			$value->{$key} = stripslashes_deep($data);
+		}
+	}
+	else
+	{
+		$value = stripslashes($value);
+	}
+
+	return $value;
 }
