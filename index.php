@@ -11,12 +11,12 @@ die('ok');
 //$num = '889352208136690662';
 $num = '889602731173989991';
 $url = 'http://www.kuaidi100.com/autonumber/autoComNum?resultv2=1&text='.$num;
-$data = getSslPage($url);
+$data = get_ssl_page($url);
 $re = json_decode($data, true);
 
 $type = $re['auto'][0]['comCode'];
 $url2 = 'http://www.kuaidi100.com/query?type='.$type.'&postid='.$num.'&temp='.(1/time());
-$data = getSslPage($url2);
+$data = get_ssl_page($url2);
 $re2 = json_decode($data,true);
 
 dump($re);

@@ -1941,7 +1941,7 @@ function trans_lang()
  *
  * @return mixed
  */
-function getSslPage($url)
+function get_ssl_page($url)
 {
 	/*  http://www.manongjc.com/article/1428.html */
 	$ch = curl_init();
@@ -1993,7 +1993,7 @@ function get_1688($url)
 //	$url = 'https://www.aliexpress.com/item/New-2016-Brand-Autumn-Winter-Sudaderas-Hombre-Thick-Velvet-Sweatshirt-Men-Sport-Baseball-Soft-Shell-Mens/32699113679.html?spm=2114.search0103.3.45.IGTqs5&ws_ab_test=searchweb0_0,searchweb201602_1_10152_10151_10065_10344_10068_10345_10342_10343_10340_10341_10541_10562_10084_10083_10307_10175_10539_10312_10059_10313_10314_10534_10533_100031_10604_10603_10103_10594_10557_10596_10595_10142_10107,searchweb201603_25,ppcSwitch_5&btsid=3f4c49e7-a036-4ef1-8ee4-ef2dba60bc2b&algo_expid=170b32a2-8552-4dd7-b6ea-63f0253689f2-5&algo_pvid=170b32a2-8552-4dd7-b6ea-63f0253689f2&rmStoreLevelAB=3';
 	try
 	{
-		$html = getSslPage($url);
+		$html = get_ssl_page($url);
 //			$html = file_get_contents('./ali.html');
 		dump($html);
 		file_put_contents('./ali.html', $html);
@@ -2017,7 +2017,7 @@ function get_1688($url)
 		$detail_preg = '/data-tfs-url=\"(.*)\"\s/';
 		preg_match_all($detail_preg, $html, $details);
 		dump($details[1]);
-		$json = getSslPage($details[1][0]);
+		$json = get_ssl_page($details[1][0]);
 //			dump($json);
 		$img_preg = '/\\\"(https:\/\/cbu.*?\.jpg)\\\"/';
 		preg_match_all($img_preg, $json, $detail_pics);
@@ -2054,7 +2054,7 @@ function get_aliexpress($url)
 	try
 	{
 //		$url  = 'https://www.aliexpress.com/item/New-2016-Brand-Autumn-Winter-Sudaderas-Hombre-Thick-Velvet-Sweatshirt-Men-Sport-Baseball-Soft-Shell-Mens/32699113679.html?spm=2114.search0103.3.45.IGTqs5&ws_ab_test=searchweb0_0,searchweb201602_1_10152_10151_10065_10344_10068_10345_10342_10343_10340_10341_10541_10562_10084_10083_10307_10175_10539_10312_10059_10313_10314_10534_10533_100031_10604_10603_10103_10594_10557_10596_10595_10142_10107,searchweb201603_25,ppcSwitch_5&btsid=3f4c49e7-a036-4ef1-8ee4-ef2dba60bc2b&algo_expid=170b32a2-8552-4dd7-b6ea-63f0253689f2-5&algo_pvid=170b32a2-8552-4dd7-b6ea-63f0253689f2&rmStoreLevelAB=3';
-		$html = getSslPage($url);
+		$html = get_ssl_page($url);
 //		file_put_contents('./aliexpress.html', $html);
 //		$html = file_get_contents('./aliexpress.html');
 		// 获取标题
@@ -2090,7 +2090,7 @@ function get_aliexpress($url)
 		// 获取详情图的地址
 		$detail_preg = '/window\.runParams\.detailDesc\s?=\s?\"(.*)\"/';
 		preg_match_all($detail_preg, $html, $details);
-		$json     = getSslPage($details[1][0]);
+		$json     = get_ssl_page($details[1][0]);
 		$img_preg = '/src=\"(https:.*?\.jpg)/';
 		preg_match_all($img_preg, $json, $detail_pics);
 		if (empty($detail_pics))
@@ -2417,12 +2417,12 @@ function get_express_100($num)
 {
 	$num  = '889602731173989991';
 	$url  = 'http://www.kuaidi100.com/autonumber/autoComNum?resultv2=1&text='.$num;
-	$data = getSslPage($url);
+	$data = get_ssl_page($url);
 	$re   = json_decode($data, TRUE);
 
 	$type = $re['auto'][0]['comCode'];
 	$url2 = 'http://www.kuaidi100.com/query?type='.$type.'&postid='.$num.'&temp='.(1 / time());
-	$data = getSslPage($url2);
+	$data = get_ssl_page($url2);
 	$re2  = json_decode($data, TRUE);
 }
 
