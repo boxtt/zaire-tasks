@@ -1,6 +1,4 @@
 <?php
-
-// 设置时区为上海
 ini_set('date.timezone', 'Asia/Shanghai');
 // 自己写的
 if ( ! function_exists('array_column'))
@@ -1066,7 +1064,7 @@ function echo_arr_one($result)
 	}
 }
 
-function echo_t($num = 1,$exp='')
+function echo_t($num = 1, $exp = '')
 {
 	$num = (int) $num;
 	if ($num < 1)
@@ -1081,7 +1079,7 @@ function echo_t($num = 1,$exp='')
 	{
 		echo(is_cli() ? "\t" : '&nbsp;&nbsp;&nbsp;&nbsp;');
 	}
-	if($exp)
+	if ($exp)
 	{
 		echo $exp;
 	}
@@ -1938,18 +1936,19 @@ function trans_lang()
  * 访问网页
  *
  * @param $url
+ * @param $user_agent
  *
  * @return mixed
  */
-function get_ssl_page($url)
+function get_ssl_page($url, $user_agent = '')
 {
 	/*  http://www.manongjc.com/article/1428.html */
 	$ch = curl_init();
 
-	$user_agent      = get_user_agent();
-	$count           = count($user_agent);
-	$rand            = rand(1, $count);
-	$user_agent_rand = $user_agent[$rand - 1];
+	if ( ! $user_agent)
+	{
+		$user_agent = get_user_agent();
+	}
 
 	// 设置浏览器的特定header
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -1965,7 +1964,7 @@ function get_ssl_page($url)
 //		'upgrade-insecure-requests:1',
 //		"User-Agent: $user_agent_rand",
 
-"User-Agent: $user_agent_rand",
+"User-Agent: $user_agent",
 "Accept-Language: en-us,en;q=0.5",
 "Connection: keep-alive",
 "Accept: */*",
