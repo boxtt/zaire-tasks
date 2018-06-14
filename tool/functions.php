@@ -2339,7 +2339,7 @@ function telephone_type($telephone)
 	}
 }
 
-// 检测加油卡是中石油的还是中石化的
+// 检测加油卡是中石油的还是中石化的trans_time
 function fuel_card_type($card)
 {
 	// 中国石油加油卡是“9”开头16位卡号。 中国石化是“1”开头19位的卡号
@@ -2552,4 +2552,302 @@ function stripslashes_deep($value)
 	}
 
 	return $value;
+}
+
+//图片格式转换
+/***
+ * pam:
+ * 原图片//可为http图片（必须以http开头）或者服务器端图片
+ * 例如：    var_dump(imgConvert($_SERVER['DOCUMENT_ROOT'].'/images/1.webp'));
+ * 或者var_dump(imgConvert('http://localhost:80/images/1.webp'));
+ * 新图片类型(default:原图片类型）
+ * 新文件名(default:原文件名，文件名不带类型)
+ * 新文件路径(default:imageconvert/+图片类型+/)图片路径必须以/结尾;
+ * rt:
+ * array或者1(传递非图片时返回)或者2(失败时返回);
+ ***/
+function imgConvert($imgurl, $newType, $newName, $newPath)
+{
+	ini_set('memory_limit', '1024M');
+	$imgOldType = '';
+	if (stripos($imgurl, 'http') === 0)
+	{//是http的图片的时候
+		$imgheaderInfo = get_headers($imgurl);
+		$imgurlType    = implode('', $imgheaderInfo);
+		if (stripos($imgurlType, 'image') === FALSE)
+		{//验证是否是图片
+			return 1;
+		};
+		foreach ($imgheaderInfo as $key => $value)
+		{//获取图片原始格式
+			if (stripos($value, 'image') > 0)
+			{
+				$imgOldType = substr($value, stripos($value, '/') + 1, strlen($value));
+			}
+		}
+	}
+	else
+	{
+		if (is_file($imgurl))
+		{
+			$file = fopen($imgurl, "rb");
+			$bin  = fread($file, 2); //只读2字节
+			fclose($file);
+			$strInfo  = @unpack("C2chars", $bin);
+			$typeCode = intval($strInfo['chars1'].$strInfo['chars2']);
+			switch ($typeCode)
+			{
+				//case 7790: $imgOldType = 'exe'; break;
+				//case 7784: $imgOldType = 'midi'; break;
+				//case 8297: $imgOldType = 'rar'; break;
+				case 255216:
+					$imgOldType = 'jpeg';
+					break;
+				case 7173:
+					$imgOldType = 'gif';
+					break;
+				case 6677:
+					$imgOldType = 'bmp';
+					break;
+				case 13780:
+					$imgOldType = 'png';
+					break;
+				case 8273:
+					$imgOldType = 'webp';
+					break;
+				default:
+					return 2;
+					break;
+			}
+		}
+	}
+	$imgOldNameWithType = substr($imgurl, strripos($imgurl, '/') + 1, strlen($imgurl));//获取图片原始名字;
+	$imgOldName         = substr($imgOldNameWithType, 0, strripos($imgOldNameWithType, '.'));
+
+	if ( ! isset($newType))
+	{//新图片类型
+		$newType = $imgOldType;
+	}
+	if ( ! isset($newPath))
+	{//图片新路径
+		$newPath = 'imageconvert/'.$newType.'/';
+	}
+	dump($newPath);
+	if ( ! is_dir($newPath))
+	{
+		mkdir($newPath);
+	}
+	if ( ! isset($newName))
+	{//新图片名称
+		$newName = $imgOldName;
+	}
+	//如果图片已经存在则文件名后加1；
+	if (file_exists($newPath.$newName.'.'.$newType))
+	{
+		$count = 1;
+		for ($i = 1; file_exists($newPath.$newName.'('.$i.').'.$newType); $i ++)
+		{
+			$count ++;
+		}
+		$newName = $newName.'('.$count.')';//最终文件名
+	}
+	switch ($imgOldType)
+	{
+		case 'jpeg':
+			$imgTemSource = imagecreatefromjpeg($imgurl);
+			switch ($newType)
+			{
+				case 'jpeg':
+					imagejpeg($imgTemSource, $newPath.$newName.'.'.$newType, 6);
+					break;
+				case 'webp':
+					imagewebp($imgTemSource, $newPath.$newName.'.'.$newType, 6);
+					# code...
+					break;
+				case 'png':
+					imagepng($imgTemSource, $newPath.$newName.'.'.$newType, 6);
+					break;
+				case 'gif':
+					imagegif($imgTemSource, $newPath.$newName.'.'.$newType, 6);
+					break;
+				case 'wbmp':
+					imagewbmp($imgTemSource, $newPath.$newName.'.'.$newType, 6);
+				case 'xbm':
+					imagexbm($imgTemSource, $newPath.$newName.'.'.$newType, 6);
+					# code...
+					break;
+				default:
+					# code...
+					break;
+			}
+			break;
+		case 'webp':
+			$imgTemSource = imagecreatefromwebp($imgurl);
+			switch ($newType)
+			{
+				case 'jpeg':
+					imagejpeg($imgTemSource, $newPath.$newName.'.'.$newType, 80);
+					break;
+				case 'webp':
+					imagewebp($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				case 'png':
+					imagepng($imgTemSource, $newPath.$newName.'.'.$newType, 2);
+					break;
+				case 'gif':
+					imagegif($imgTemSource, $newPath.$newName.'.'.$newType);
+					break;
+				case 'wbmp':
+					imagewbmp($imgTemSource, $newPath.$newName.'.'.$newType);
+				case 'xbm':
+					imagexbm($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				default:
+					# code...
+					break;
+			}
+			break;
+		case 'png':
+			$imgTemSource = imagecreatefrompng($imgurl);
+			switch ($newType)
+			{
+				case 'jpeg':
+					imagejpeg($imgTemSource, $newPath.$newName.'.'.$newType, 80);
+					break;
+				case 'webp':
+					imagewebp($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				case 'png':
+					imagepng($imgTemSource, $newPath.$newName.'.'.$newType, 2);
+					break;
+				case 'gif':
+					imagegif($imgTemSource, $newPath.$newName.'.'.$newType);
+					break;
+				case 'wbmp':
+					imagewbmp($imgTemSource, $newPath.$newName.'.'.$newType);
+				case 'xbm':
+					imagexbm($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				default:
+					# code...
+					break;
+			}
+			break;
+		case 'gif':
+			$imgTemSource = imagecreatefromgif($imgurl);
+			switch ($newType)
+			{
+				case 'jpeg':
+					imagejpeg($imgTemSource, $newPath.$newName.'.'.$newType, 80);
+					break;
+				case 'webp':
+					imagewebp($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				case 'png':
+					imagepng($imgTemSource, $newPath.$newName.'.'.$newType, 2);
+					break;
+				case 'gif':
+					imagegif($imgTemSource, $newPath.$newName.'.'.$newType);
+					break;
+				case 'wbmp':
+					imagewbmp($imgTemSource, $newPath.$newName.'.'.$newType);
+				case 'xbm':
+					imagexbm($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				default:
+					# code...
+					break;
+			}
+			break;
+		case 'wbmp':
+			$imgTemSource = imagecreatefromwbmp($imgurl);
+			switch ($newType)
+			{
+				case 'jpeg':
+					imagejpeg($imgTemSource, $newPath.$newName.'.'.$newType, 80);
+					break;
+				case 'webp':
+					imagewebp($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				case 'png':
+					imagepng($imgTemSource, $newPath.$newName.'.'.$newType, 2);
+					break;
+				case 'gif':
+					imagegif($imgTemSource, $newPath.$newName.'.'.$newType);
+					break;
+				case 'wbmp':
+					imagewbmp($imgTemSource, $newPath.$newName.'.'.$newType);
+				case 'xbm':
+					imagexbm($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				default:
+					# code...
+					break;
+			}
+			break;
+		case 'xbm':
+			$imgTemSource = imagecreatefromxbm($imgurl);
+			switch ($newType)
+			{
+				case 'jpeg':
+					imagejpeg($imgTemSource, $newPath.$newName.'.'.$newType, 80);
+					break;
+				case 'webp':
+					imagewebp($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				case 'png':
+					imagepng($imgTemSource, $newPath.$newName.'.'.$newType, 2);
+					break;
+				case 'gif':
+					imagegif($imgTemSource, $newPath.$newName.'.'.$newType);
+					break;
+				case 'wbmp':
+					imagewbmp($imgTemSource, $newPath.$newName.'.'.$newType);
+				case 'xbm':
+					imagexbm($imgTemSource, $newPath.$newName.'.'.$newType);
+					# code...
+					break;
+				default:
+					# code...
+					break;
+			}
+			break;
+
+		default:
+			return 2;
+			# code...
+			break;
+	}
+	imagedestroy($imgTemSource);
+
+	$arrImgInfo = array('newType' => $newType, 'newName' => $newName, 'newPath' => $newPath);
+
+	return $arrImgInfo;
+}
+
+// 判断是否是微信客户端
+function is_weixin()
+{
+	return strpos($_SERVER['HTTP_USER_AGENT'], 'MicroMessenger') !== FALSE ? TRUE : FALSE;
+}
+
+function object_to_array($obj)
+{
+	$_arr = is_object($obj) ? get_object_vars($obj) : $obj;
+	foreach ($_arr as $key => $val)
+	{
+		$val       = (is_array($val) || is_object($val)) ? object_to_array($val) : $val;
+		$arr[$key] = $val;
+	}
+
+	return $arr;
 }
