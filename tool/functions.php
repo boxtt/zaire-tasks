@@ -468,7 +468,7 @@ function get_total_millisecond()
 // 获取随机的user-agent
 function get_user_agent()
 {
-	$user_agent = require __DIR__.'./user_agent.php';
+	$user_agent = require __DIR__.'/./user_agent.php';
 
 	return $user_agent;
 }
