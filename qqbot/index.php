@@ -1,107 +1,114 @@
 <?php
-require './../tool/functions.php';
-header('Content-Type: text/html; charset=utf-8');
+try
+{
+	require './../tool/functions.php';
+	header('Content-Type: text/html; charset=utf-8');
 
-$user_agent = get_user_agent();
+	$user_agent = get_user_agent();
 
-$url_sig           = 'https://xui.ptlogin2.qq.com/cgi-bin/xlogin';
-$url_sig_query     = [
-	'daid'           => '164',
-	'target'         => 'self',
-	'style'          => '40',
-	'pt_disable_pwd' => '1',
-	'mibao_css'      => 'm_webqq',
-	'appid'          => '501004106',
-	'enable_qlogin'  => '0',
-	'no_verifyimg'   => '1',
-	's_url'          => 'http://web2.qq.com/proxy.html',
-	'f_url'          => 'loginerroralert',
-	'strong_login'   => '1',
-	'login_state'    => '10',
-	't'              => '20131024001',
-];
-$url_sig_query_str = http_build_query($url_sig_query);
-$url_sig_all       = $url_sig.'?'.$url_sig_query_str;
-$login_sig         = get_web_qq_cookie($url_sig_all, $user_agent, 'pt_login_sig');
+	$url_sig           = 'https://xui.ptlogin2.qq.com/cgi-bin/xlogin';
+	$url_sig_query     = [
+		'daid'           => '164',
+		'target'         => 'self',
+		'style'          => '40',
+		'pt_disable_pwd' => '1',
+		'mibao_css'      => 'm_webqq',
+		'appid'          => '501004106',
+		'enable_qlogin'  => '0',
+		'no_verifyimg'   => '1',
+		's_url'          => 'http://web2.qq.com/proxy.html',
+		'f_url'          => 'loginerroralert',
+		'strong_login'   => '1',
+		'login_state'    => '10',
+		't'              => '20131024001',
+	];
+	$url_sig_query_str = http_build_query($url_sig_query);
+	$url_sig_all       = $url_sig.'?'.$url_sig_query_str;
+	$login_sig         = get_web_qq_cookie($url_sig_all, $user_agent, 'pt_login_sig');
 
-/*// 获取登录二维码图片
-$start_url = 'http://web2.qq.com/';
-$re        = get_ssl_page($start_url);
-dump($re);
-die('ok');*/
+	/*// 获取登录二维码图片
+	$start_url = 'http://web2.qq.com/';
+	$re        = get_ssl_page($start_url);
+	dump($re);
+	die('ok');*/
 
 // 获取ptqrtoken参数
-$url_get_token           = 'https://ssl.ptlogin2.qq.com/ptqrshow';
-$url_get_token_query     = [
-	'appid'      => '501004106',
-	'e'          => '2',
-	'l'          => 'M',
-	's'          => '3',
-	'd'          => '72',
-	'v'          => '4',
-	't'          => strval(random()),
-	'daid'       => '164',
-	'pt_3rd_aid' => '0',
-];
-$url_get_token_query_str = http_build_query($url_get_token_query);
-$url_get_token_all       = $url_get_token.'?'.$url_get_token_query_str;
-$qrsig                   = get_web_qq_cookie($url_get_token_all, $user_agent, 'qrsig');
+	$url_get_token           = 'https://ssl.ptlogin2.qq.com/ptqrshow';
+	$url_get_token_query     = [
+		'appid'      => '501004106',
+		'e'          => '2',
+		'l'          => 'M',
+		's'          => '3',
+		'd'          => '72',
+		'v'          => '4',
+		't'          => strval(random()),
+		'daid'       => '164',
+		'pt_3rd_aid' => '0',
+	];
+	$url_get_token_query_str = http_build_query($url_get_token_query);
+	$url_get_token_all       = $url_get_token.'?'.$url_get_token_query_str;
+	$qrsig                   = get_web_qq_cookie($url_get_token_all, $user_agent, 'qrsig');
 
-$ptqrtoken = hash33($qrsig);
+	$ptqrtoken = hash33($qrsig);
 
-$url_get_ticket = 'https://ssl.ptlogin2.qq.com/ptqrlogin';
-$query_data     = [
-	'ul'         => 'http://web2.qq.com/proxy.html', // 不变
-	// 从这个网站获取set-cookie的 qrsig字段 然后在js里面加密  $.str.hash33($.cookie.get("qrsig"))
-	// https://ssl.ptlogin2.qq.com/ptqrshow
-	// ?appid=501004106
-	// &e=2
-	// &l=M
-	// &s=3
-	// &d=72
-	// &v=4
-	// &t=0.8274302217884086 // js里面的Math.random() 获取随机数
-	// &daid=164
-	// &pt_3rd_aid=0
-	'ptqrtoken'  => $ptqrtoken, // 这是会变化的
-	'ptredirect' => '0', // 不变
-	'h'          => '1', // 不变
-	't'          => '1', // 不变
-	'g'          => '1', // 不变
-	'from_ui'    => '1', // 不变
-	'ptlang'     => '2052', // 不变
-	'action'     => '0-0-'.get_total_millisecond(), // 0-0-时间戳后加三位，感觉应该是微妙
-	'js_ver'     => '10270', // 不变
-	'js_type'    => '1', // 不变
-	// 每次刷新的时候会变化，从
-	//https://xui.ptlogin2.qq.com/cgi-bin/xlogin
-	//?daid=164
-	//&target=self
-	//&style=40
-	//&pt_disable_pwd=1
-	//&mibao_css=m_webqq
-	//&appid=501004106
-	//&enable_qlogin=0
-	//&no_verifyimg=1
-	//&s_url=http%3A%2F%2Fweb2.qq.com%2Fproxy.html
-	//&f_url=loginerroralert
-	//&strong_login=1
-	//&login_state=10
-	//&t=20131024001
-	// 这个网站里面的响应头里面获取set-cookie字段
-	'login_sig'  => $login_sig,
-	'pt_uistyle' => '40', // 不变
-	'aid'        => '501004106', // 不变
-	'daid'       => '164', // 不变
-	'mibao_css'  => 'm_webqq', // 不变
-];
+	$url_get_ticket = 'https://ssl.ptlogin2.qq.com/ptqrlogin';
+	$query_data     = [
+		'ul'         => 'http://web2.qq.com/proxy.html', // 不变
+		// 从这个网站获取set-cookie的 qrsig字段 然后在js里面加密  $.str.hash33($.cookie.get("qrsig"))
+		// https://ssl.ptlogin2.qq.com/ptqrshow
+		// ?appid=501004106
+		// &e=2
+		// &l=M
+		// &s=3
+		// &d=72
+		// &v=4
+		// &t=0.8274302217884086 // js里面的Math.random() 获取随机数
+		// &daid=164
+		// &pt_3rd_aid=0
+		'ptqrtoken'  => $ptqrtoken, // 这是会变化的
+		'ptredirect' => '0', // 不变
+		'h'          => '1', // 不变
+		't'          => '1', // 不变
+		'g'          => '1', // 不变
+		'from_ui'    => '1', // 不变
+		'ptlang'     => '2052', // 不变
+		'action'     => '0-0-'.get_total_millisecond(), // 0-0-时间戳后加三位，感觉应该是微妙
+		'js_ver'     => '10270', // 不变
+		'js_type'    => '1', // 不变
+		// 每次刷新的时候会变化，从
+		//https://xui.ptlogin2.qq.com/cgi-bin/xlogin
+		//?daid=164
+		//&target=self
+		//&style=40
+		//&pt_disable_pwd=1
+		//&mibao_css=m_webqq
+		//&appid=501004106
+		//&enable_qlogin=0
+		//&no_verifyimg=1
+		//&s_url=http%3A%2F%2Fweb2.qq.com%2Fproxy.html
+		//&f_url=loginerroralert
+		//&strong_login=1
+		//&login_state=10
+		//&t=20131024001
+		// 这个网站里面的响应头里面获取set-cookie字段
+		'login_sig'  => $login_sig,
+		'pt_uistyle' => '40', // 不变
+		'aid'        => '501004106', // 不变
+		'daid'       => '164', // 不变
+		'mibao_css'  => 'm_webqq', // 不变
+	];
 
-$query_str          = http_build_query($query_data);
-$url_get_ticket_all = $url_get_ticket.'?'.$query_str;
+	$query_str          = http_build_query($query_data);
+	$url_get_ticket_all = $url_get_ticket.'?'.$query_str;
 
-$re = get_ssl_page($url_get_ticket_all, $user_agent);
+	$re = get_ssl_page($url_get_ticket_all, $user_agent);
 
-dump($re);
+	dump($re);
+}
+catch (Exception $e)
+{
+	echo 'code: '.$e->getCode().'---message:'.$e->getMessage();
+}
 
 function get_web_qq_cookie($url, $user_agent, $cookie_key = 'pt_login_sig')
 {
