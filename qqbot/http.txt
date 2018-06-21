@@ -98,3 +98,167 @@ https://ssl.ptlogin2.qq.com/ptqrlogin
 &daid=164
 &mibao_css=m_webqq
 &
+
+
+--------------------------------------------------------------------
+2018-06-21
+xlogin
+url--
+https://xui.ptlogin2.qq.com/cgi-bin/xlogin?daid=164&target=self&style=40&pt_disable_pwd=1&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&no_verifyimg=1&s_url=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001
+
+response header
+content-encoding: gzip
+content-length: 10375
+content-type: text/html
+date: Thu, 21 Jun 2018 03:08:03 GMT
+last-modified: Thu, 08 Mar 2012 02:04:00 GMT
+p3p: CP="CAO PSA OUR"
+server: QZHTTP-2.38.41
+set-cookie: pt_clientip=bc9a733c3e8ff873; PATH=/; DOMAIN=ptlogin2.qq.com;
+set-cookie: pt_serverip=56460abf0e8d0210; PATH=/; DOMAIN=ptlogin2.qq.com;
+set-cookie: pt_user_id=7853893012471964192; EXPIRES=Sun, 18-Jun-2028 03:08:04 GMT; PATH=/; DOMAIN=ui.ptlogin2.qq.com;
+set-cookie: uikey=59837797cc85657bc12354f344b0f3af86c9d5453b77ab0bb8de8400c9be3167; PATH=/; DOMAIN=ptlogin2.qq.com;
+set-cookie: pt_guid_sig=71e121ebcdf146827559a644700c960cea78ff97121f2f35d45bf08e2e40554c; EXPIRES=Sat, 21-Jul-2018 03:08:04 GMT; PATH=/; DOMAIN=ptlogin2.qq.com;
+set-cookie: ptui_identifier=000DC841AD222FF4C80260DC2379270115529EA235C614909950500778; PATH=/; DOMAIN=ui.ptlogin2.qq.com;
+set-cookie: pt_login_sig=7b*Dp80QjqI3GKurLq9zT28Qe-stiWnu0ZYqlsWbPbJcMGdKdl4GtMCcdi0UJmO2; PATH=/; DOMAIN=ptlogin2.qq.com;
+set-cookie: pt_local_token=-811710905; PATH=/; DOMAIN=ptlogin2.qq.com;
+status: 200
+strict-transport-security: max-age=31536000
+
+request header
+:authority: xui.ptlogin2.qq.com
+:method: GET
+:path: /cgi-bin/xlogin?daid=164&target=self&style=40&pt_disable_pwd=1&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&no_verifyimg=1&s_url=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001
+:scheme: https
+accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9
+cache-control: no-cache
+cookie: TDC_token=3745448340; pt_recent_uins=7cc5615e8dc81b5acce1e7b9a5b536d98dcd19f6ad414d4e8376505bd874ee98e274c7f61cdd405e0895e3a6dc0292fdcccb19a31052c589; confirmuin=0; ptdrvs=iUeNGfxhv3MlzgIvR7qsEd0HUquv7WkfvylHe3YDIEk_; ptvfsession=df9bd36c4c696cc3087d4f58448e03155d79ae792fc982c6c1d746a584aad2c2468b896dc88d01419830a0e1ba5b8bbeba6b0983f5c716fb; pt_login_sig=LDIhOjcVBpOwI61yfdaRv3-QqxB4x39GMWypbr9xG6ejiMPzOlT9JXF5TW2wz2tj; pt_clientip=c075733c3e8f64ef; pt_serverip=7eaa0abf0e2fb90f; pt_local_token=1856757109; uikey=97d9f97033dec9754d9f1eeeee298920f8b9830efc3228cb8a726be42b6b248d; pt_guid_sig=594ae247717bcb8369476978e1b0bfd0efc00204951bc1342569ca440d07732c; qrsig=l904FUc4rXIV5pMoLsXDhADmlp84Y8v5ximxb7r2Iaf8zadR8yLNXqN9oW77pl3t
+pragma: no-cache
+referer: http://web2.qq.com/
+upgrade-insecure-requests: 1
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36
+
+ptqrshow 1
+url --
+https://ssl.ptlogin2.qq.com/ptqrshow?appid=501004106&e=2&l=M&s=3&d=72&v=4&t=0.8769784451025846&daid=164&pt_3rd_aid=0
+
+response header
+cache-control: no-cache, no-store, must-revalidate
+content-length: 445
+date: Thu, 21 Jun 2018 03:08:06 GMT
+expires: -1
+p3p: CP=CAO PSA OUR
+pragma: no-cache
+server: Tencent Login Server/2.0.0
+set-cookie: qrsig=f*7yUUbvD5wUZAwngLIB7Wuf9KjXSe-u5rN8cJ2M-i0o1trrirZcu7JBVh3W0zL9;Path=/;Domain=ptlogin2.qq.com;
+status: 200
+strict-transport-security: max-age=31536000
+
+request header
+:authority: ssl.ptlogin2.qq.com
+:method: GET
+:path: /ptqrshow?appid=501004106&e=2&l=M&s=3&d=72&v=4&t=0.8769784451025846&daid=164&pt_3rd_aid=0
+:scheme: https
+accept: image/webp,image/apng,image/*,*/*;q=0.8
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9
+cache-control: no-cache
+cookie: pt_recent_uins=7cc5615e8dc81b5acce1e7b9a5b536d98dcd19f6ad414d4e8376505bd874ee98e274c7f61cdd405e0895e3a6dc0292fdcccb19a31052c589; confirmuin=0; ptdrvs=iUeNGfxhv3MlzgIvR7qsEd0HUquv7WkfvylHe3YDIEk_; ptvfsession=df9bd36c4c696cc3087d4f58448e03155d79ae792fc982c6c1d746a584aad2c2468b896dc88d01419830a0e1ba5b8bbeba6b0983f5c716fb; qrsig=l904FUc4rXIV5pMoLsXDhADmlp84Y8v5ximxb7r2Iaf8zadR8yLNXqN9oW77pl3t; pt_login_sig=7b*Dp80QjqI3GKurLq9zT28Qe-stiWnu0ZYqlsWbPbJcMGdKdl4GtMCcdi0UJmO2; pt_clientip=bc9a733c3e8ff873; pt_serverip=56460abf0e8d0210; pt_local_token=-811710905; uikey=59837797cc85657bc12354f344b0f3af86c9d5453b77ab0bb8de8400c9be3167; pt_guid_sig=71e121ebcdf146827559a644700c960cea78ff97121f2f35d45bf08e2e40554c; pgv_pvi=1218903040; pgv_si=s4139766784
+pragma: no-cache
+referer: https://xui.ptlogin2.qq.com/cgi-bin/xlogin?daid=164&target=self&style=40&pt_disable_pwd=1&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&no_verifyimg=1&s_url=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36
+
+ptqrshow 2
+url --
+https://ssl.ptlogin2.qq.com/ptqrshow?appid=501004106&e=2&l=M&s=3&d=72&v=4&t=0.5592417193035666&daid=164&pt_3rd_aid=0
+
+response header
+cache-control: no-cache, no-store, must-revalidate
+content-length: 440
+date: Thu, 21 Jun 2018 03:08:06 GMT
+expires: -1
+p3p: CP=CAO PSA OUR
+pragma: no-cache
+server: Tencent Login Server/2.0.0
+set-cookie: qrsig=eUEEyNA7eYh3v*FMzLAxaoqX**-ng8fGbOAc2HPAPA4trQZiNTc0u6gPdbM4-KTz;Path=/;Domain=ptlogin2.qq.com;
+status: 200
+strict-transport-security: max-age=31536000
+
+request header
+:authority: ssl.ptlogin2.qq.com
+:method: GET
+:path: /ptqrshow?appid=501004106&e=2&l=M&s=3&d=72&v=4&t=0.5592417193035666&daid=164&pt_3rd_aid=0
+:scheme: https
+accept: image/webp,image/apng,image/*,*/*;q=0.8
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9
+cache-control: no-cache
+cookie: pt_recent_uins=7cc5615e8dc81b5acce1e7b9a5b536d98dcd19f6ad414d4e8376505bd874ee98e274c7f61cdd405e0895e3a6dc0292fdcccb19a31052c589; confirmuin=0; ptdrvs=iUeNGfxhv3MlzgIvR7qsEd0HUquv7WkfvylHe3YDIEk_; ptvfsession=df9bd36c4c696cc3087d4f58448e03155d79ae792fc982c6c1d746a584aad2c2468b896dc88d01419830a0e1ba5b8bbeba6b0983f5c716fb; qrsig=l904FUc4rXIV5pMoLsXDhADmlp84Y8v5ximxb7r2Iaf8zadR8yLNXqN9oW77pl3t; pt_login_sig=7b*Dp80QjqI3GKurLq9zT28Qe-stiWnu0ZYqlsWbPbJcMGdKdl4GtMCcdi0UJmO2; pt_clientip=bc9a733c3e8ff873; pt_serverip=56460abf0e8d0210; pt_local_token=-811710905; uikey=59837797cc85657bc12354f344b0f3af86c9d5453b77ab0bb8de8400c9be3167; pt_guid_sig=71e121ebcdf146827559a644700c960cea78ff97121f2f35d45bf08e2e40554c; pgv_pvi=1218903040; pgv_si=s4139766784
+pragma: no-cache
+referer: https://xui.ptlogin2.qq.com/cgi-bin/xlogin?daid=164&target=self&style=40&pt_disable_pwd=1&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&no_verifyimg=1&s_url=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36
+
+ptqrlogin 1
+https://ssl.ptlogin2.qq.com/ptqrlogin?u1=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&ptqrtoken=563323877&ptredirect=0&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=0-0-1529550486973&js_ver=10271&js_type=1&login_sig=7b*Dp80QjqI3GKurLq9zT28Qe-stiWnu0ZYqlsWbPbJcMGdKdl4GtMCcdi0UJmO2&pt_uistyle=40&aid=501004106&daid=164&mibao_css=m_webqq&
+
+response header
+cache-control: no-cache, no-store, must-revalidate
+content-length: 63
+content-type: application/javascript
+date: Thu, 21 Jun 2018 03:08:09 GMT
+expires: -1
+pragma: no-cache
+server: Tencent Login Server/2.0.0
+status: 200
+strict-transport-security: max-age=31536000
+
+request header
+:authority: ssl.ptlogin2.qq.com
+:method: GET
+:path: /ptqrlogin?u1=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&ptqrtoken=563323877&ptredirect=0&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=0-0-1529550486973&js_ver=10271&js_type=1&login_sig=7b*Dp80QjqI3GKurLq9zT28Qe-stiWnu0ZYqlsWbPbJcMGdKdl4GtMCcdi0UJmO2&pt_uistyle=40&aid=501004106&daid=164&mibao_css=m_webqq&
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9
+cache-control: no-cache
+cookie: pt_recent_uins=7cc5615e8dc81b5acce1e7b9a5b536d98dcd19f6ad414d4e8376505bd874ee98e274c7f61cdd405e0895e3a6dc0292fdcccb19a31052c589; confirmuin=0; ptdrvs=iUeNGfxhv3MlzgIvR7qsEd0HUquv7WkfvylHe3YDIEk_; ptvfsession=df9bd36c4c696cc3087d4f58448e03155d79ae792fc982c6c1d746a584aad2c2468b896dc88d01419830a0e1ba5b8bbeba6b0983f5c716fb; pt_login_sig=7b*Dp80QjqI3GKurLq9zT28Qe-stiWnu0ZYqlsWbPbJcMGdKdl4GtMCcdi0UJmO2; pt_clientip=bc9a733c3e8ff873; pt_serverip=56460abf0e8d0210; pt_local_token=-811710905; uikey=59837797cc85657bc12354f344b0f3af86c9d5453b77ab0bb8de8400c9be3167; pt_guid_sig=71e121ebcdf146827559a644700c960cea78ff97121f2f35d45bf08e2e40554c; pgv_pvi=1218903040; pgv_si=s4139766784; qrsig=eUEEyNA7eYh3v*FMzLAxaoqX**-ng8fGbOAc2HPAPA4trQZiNTc0u6gPdbM4-KTz
+pragma: no-cache
+referer: https://xui.ptlogin2.qq.com/cgi-bin/xlogin?daid=164&target=self&style=40&pt_disable_pwd=1&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&no_verifyimg=1&s_url=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36
+
+ptqrlogin 2
+https://ssl.ptlogin2.qq.com/ptqrlogin?u1=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&ptqrtoken=563323877&ptredirect=0&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=1-0-1529550489973&js_ver=10271&js_type=1&login_sig=7b*Dp80QjqI3GKurLq9zT28Qe-stiWnu0ZYqlsWbPbJcMGdKdl4GtMCcdi0UJmO2&pt_uistyle=40&aid=501004106&daid=164&mibao_css=m_webqq&
+
+response header
+cache-control: no-cache, no-store, must-revalidate
+content-length: 63
+content-type: application/javascript
+date: Thu, 21 Jun 2018 03:08:12 GMT
+expires: -1
+pragma: no-cache
+server: Tencent Login Server/2.0.0
+status: 200
+strict-transport-security: max-age=31536000
+
+request header
+:authority: ssl.ptlogin2.qq.com
+:method: GET
+:path: /ptqrlogin?u1=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&ptqrtoken=563323877&ptredirect=0&h=1&t=1&g=1&from_ui=1&ptlang=2052&action=1-0-1529550489973&js_ver=10271&js_type=1&login_sig=7b*Dp80QjqI3GKurLq9zT28Qe-stiWnu0ZYqlsWbPbJcMGdKdl4GtMCcdi0UJmO2&pt_uistyle=40&aid=501004106&daid=164&mibao_css=m_webqq&
+:scheme: https
+accept: */*
+accept-encoding: gzip, deflate, br
+accept-language: zh-CN,zh;q=0.9
+cache-control: no-cache
+cookie: pt_recent_uins=7cc5615e8dc81b5acce1e7b9a5b536d98dcd19f6ad414d4e8376505bd874ee98e274c7f61cdd405e0895e3a6dc0292fdcccb19a31052c589; confirmuin=0; ptdrvs=iUeNGfxhv3MlzgIvR7qsEd0HUquv7WkfvylHe3YDIEk_; ptvfsession=df9bd36c4c696cc3087d4f58448e03155d79ae792fc982c6c1d746a584aad2c2468b896dc88d01419830a0e1ba5b8bbeba6b0983f5c716fb; pt_login_sig=7b*Dp80QjqI3GKurLq9zT28Qe-stiWnu0ZYqlsWbPbJcMGdKdl4GtMCcdi0UJmO2; pt_clientip=bc9a733c3e8ff873; pt_serverip=56460abf0e8d0210; pt_local_token=-811710905; uikey=59837797cc85657bc12354f344b0f3af86c9d5453b77ab0bb8de8400c9be3167; pt_guid_sig=71e121ebcdf146827559a644700c960cea78ff97121f2f35d45bf08e2e40554c; pgv_pvi=1218903040; pgv_si=s4139766784; qrsig=eUEEyNA7eYh3v*FMzLAxaoqX**-ng8fGbOAc2HPAPA4trQZiNTc0u6gPdbM4-KTz
+pragma: no-cache
+referer: https://xui.ptlogin2.qq.com/cgi-bin/xlogin?daid=164&target=self&style=40&pt_disable_pwd=1&mibao_css=m_webqq&appid=501004106&enable_qlogin=0&no_verifyimg=1&s_url=http%3A%2F%2Fweb2.qq.com%2Fproxy.html&f_url=loginerroralert&strong_login=1&login_state=10&t=20131024001
+user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36
+
+
+
+
+
+
+
