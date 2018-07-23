@@ -878,10 +878,8 @@ function get_all_files($path, &$files)
 {
 	if (is_dir($path))
 	{
-		$dp   = dir($path);
-		$file = $dp->read();
-		$e    = $file !== FALSE ? TRUE : FALSE;
-		while ($e)
+		$dp = dir($path);
+		while ($file = $dp->read())
 		{
 			if ($file != "." && $file != "..")
 			{
@@ -890,11 +888,11 @@ function get_all_files($path, &$files)
 		}
 		$dp->close();
 	}
-	if (is_file($path))
+	elseif (is_file($path))
 	{
 		output($path);
 //		unlink($path);
-//		$files[] = $path;
+		$files[] = $path;
 	}
 }
 

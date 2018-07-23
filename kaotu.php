@@ -1,9 +1,88 @@
 <?php
-header("Content-type: text/html; charset=utf-8");
+//header("Content-type: text/html; charset=utf-8");
 //header("Content-Disposition: attachment; filename=test.csv");
 require './tool/functions.php';
 
-$dir     = 'E:/aaa/jz';
+$dir     = 'E:/svn-zaire/ykyq/jz';
+$modules = [
+	'Aat', 'Common', 'Custom', 'Dir',
+	'Doc', 'Ga', 'Guide', 'Home',
+	'Manage', 'Mater', 'Statistics', 'Student',
+	'Teacher', 'Test', 'train', 'User', 'work',
+];
+
+$info = file_get_contents('./json_get_api_info.txt');
+$info = json_decode($info, TRUE);
+if ( ! $info)
+{
+
+	$files = file_get_contents('./kaotu_files_names.txt');
+	$files = json_decode($files, TRUE);
+	if ( ! $files)
+	{
+		get_all_file($dir, $files);
+		file_put_contents('./kaotu_files_names.txt', json_encode($files));
+	}
+
+	$info = [];
+	foreach ($files as $file)
+	{
+		$contents = get_content_by_line($file);
+		foreach ($contents as $line => $content)
+		{
+			foreach ($modules as $module)
+			{
+				$preg = 'getApi'.$module;
+				if ( ! isset($info[$preg]))
+				{
+					$info[$preg] = [
+						'count' => 0,
+						'data'  => [],
+					];
+				}
+				if (preg_match('/'.$preg.'/', $content))
+				{
+					$info[$preg]['count']  += 1;
+					$info[$preg]['data'][] = [
+						'file_name' => $file,
+						'line'      => $line,
+						'content'   => trim($content),
+					];
+				}
+			}
+		}
+	}
+	file_put_contents('./json_get_api_info.txt', json_encode($info));
+}
+
+echo '<pre>';
+print_r($info);
+
+die();
+
+function get_all_file($path, &$return = [])
+{
+	if (is_dir($path))
+	{
+		$path_handle = dir($path);
+		while ($file = $path_handle->read())
+		{
+			if (in_array($file, ['.', '..']))
+			{
+				continue;
+			}
+			get_all_file($path.'/'.$file, $return);
+		}
+	}
+	elseif (is_file($path))
+	{
+		$return[] = $path;
+	}
+}
+
+die('ok');
+
+$dir     = 'E:/svn-zaire/ykyq/jz';
 $modules = [
 	'Aat', 'Common', 'Custom', 'Dir',
 	'Doc', 'Ga', 'Guide', 'Home',
@@ -64,15 +143,15 @@ foreach ($modules as $module)
 								$i ++;
 								$line = fgets($h);
 								$line = trim($line);
-								$re   = strpos($line, 'use');
-								if ($re !== FALSE)
+								$info = strpos($line, 'use');
+								if ($info !== FALSE)
 								{
 //									echo_t(3, '---');
 									$use[] = str_replace([' ', ';', 'use'], ['', '', ''], $line);
 //									output($use);
 								}
-								$re = strpos($line, 'extends');
-								if ($re !== FALSE)
+								$info = strpos($line, 'extends');
+								if ($info !== FALSE)
 								{
 									$line    = str_replace([' ', ';', 'class', '{'], ['', '', '', ''], $line);
 									$la      = explode('extends', $line);
