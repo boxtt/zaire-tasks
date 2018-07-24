@@ -80,7 +80,7 @@ class Sock {
 					//读取该socket的信息，注意：第二个参数是引用传参即接收数据，第三个参数是接收数据的长度
 					do
 					{
-						$l      = socket_recv($sock, $buf, 1000, 0);
+						$l      = @socket_recv($sock, $buf, 1000, 0);
 						$len    += $l;
 						$buffer .= $buf;
 					} while ($l == 1000);
@@ -357,21 +357,21 @@ class Sock {
 				$ar['users'] = $this->getusers();        //取出所有在线者，用于显示在在线用户列表中
 				$str1        = $this->code(json_encode($ar)); //单独对新client进行编码处理，数据不一样
 				//对新client自己单独发送，因为有些数据是不一样的
-				socket_write($users[$k]['socket'], $str1, strlen($str1));
+				@socket_write($users[$k]['socket'], $str1, strlen($str1));
 				//上面已经对client自己单独发送的，后面就无需再次发送，故unset
 				unset($users[$k]);
 			}
 			//除了新client外，对其他client进行发送信息。数据量大时，就要考虑延时等问题了
 			foreach ($users as $v)
 			{
-				socket_write($v['socket'], $str, strlen($str));
+				@socket_write($v['socket'], $str, strlen($str));
 			}
 		}
 		else
 		{
 			//单独对个人发送信息，即双方聊天
-			socket_write($this->users[$k]['socket'], $str, strlen($str));
-			socket_write($this->users[$key]['socket'], $str, strlen($str));
+			@socket_write($this->users[$k]['socket'], $str, strlen($str));
+			@socket_write($this->users[$key]['socket'], $str, strlen($str));
 		}
 	}
 
